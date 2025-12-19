@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Join Queue</title>
+  <link rel="stylesheet" href="style/userstyles.css" />
+</head>
+<body>
+  <div class="container">
+    <!-- HEADER -->
+    <header>
+        <h1 class="title">Queue Status</h1>
+        <p class="subtitle">Join queues efficiently</p>
+    </header>
+
+      <button class="primary-btn">
+        +&nbsp;&nbsp;Join Queue
+      </button>
+
+    <!-- MAIN CONTENT -->
+    <section>
+      <!-- LEFT PANEL -->
+      <div class="left-panel">
+        <div class="panel-header">
+            <div class="icon-box">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-arrow-up">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
+                </svg>
+            </div>
+            <h2 class="active-queue">Active Queues</h2>
+        </div>
+
+        <div class="empty-state">
+          <div class="empty-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-user">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+            </svg>
+          </div>
+          <div class="empty-title">No queues joined yet</div>
+          <div class="empty-text">Click the button above to join one</div>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL -->
+      <div class="right-panel">
+        <div class="empty-state">
+        <div class="empty-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-user">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+            </svg>
+        </div>
+        <h2 class="empty-title">Select a queue to view</h2>
+        <p class="empty-text">Choose from the list on the left</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- HELP BUTTON -->
+  <button class="help-btn">?</button>
+
+  <!-- JOIN QUEUE MODAL (static) -->
+  <div class="overlay">
+    <div class="pop-up">
+      <div class="bar-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="three-bars">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        </svg>
+
+      </div>
+      <h2 class="join-queue">Join a Queue</h2>
+      <p class="modal-subtitle">
+        Enter a Queue ID to receive your digital token
+      </p>
+      <div class="input-box">
+        <label>Queue ID</label>
+        <input type="text" placeholder="Enter Queue ID (e.g., Q123456)" class="input" />
+      </div>
+      <div class="button">
+        <button class="closePopup join-btn">Close</button>
+        <button class="join-btn">Join Queue</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const openBtn = document.querySelector(".primary-btn");
+    const closeBtn = document.querySelector(".closePopup");
+    const overlay = document.querySelector(".overlay");
+
+    openBtn.addEventListener("click", () => {
+      overlay.classList.add("active");
+    });
+
+    closeBtn.addEventListener("click", () => {
+      overlay.classList.remove("active");
+    });
+
+    // Close when clicking outside popup
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) {
+        overlay.classList.remove("active");
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+html {
+  /* font-size: 62.5%; */
+  font-size: 9px;
+}
+
+@media (min-width: 1300px) {
+  html {
+    /* font-size: 62.5%; */
+    font-size: 10px;
+  }
+}
+
+@media (min-width: 1500px) {
+  html {
+    /* font-size: 62.5%; */
+    font-size: 12px;
+  }
+}
+
+/* HERO SECTION */
+.section1 {
+  background: linear-gradient(to bottom, #0a152e 0%, #bfcce8 100%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10rem;
+  gap: 6rem;
+  height: 100vh;
+}
+
+/* LEFT SIDE */
+.hero-left {
+  max-width: 52rem;
+}
+
+.heading {
+  font-size: 6.5rem;
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 2rem;
+}
+
+.description {
+  font-size: 2rem;
+  color: #272727;
+  line-height: 1.6;
+  margin-bottom: 2.8rem;
+}
+
+.get-started {
+  background: #111;
+  color: #fff;
+  border: none;
+  padding: 1.3rem 2.4rem;
+  border-radius: 1rem;
+  font-size: 1.6rem;
+  cursor: pointer;
+  margin-bottom: 4rem;
+}
+
+/* FEATURES */
+.features {
+  display: flex;
+  gap: 6.5rem;
+}
+
+.features div p {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.features div div {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #272727;
+}
+
+/* RIGHT SIDE */
+.hero-right img {
+  width: 60rem;
+  height: auto;
+  border-radius: 1.8rem;
+  box-shadow: 0 2rem 4rem rgba(0, 0, 0, 0.15);
+}
+
+/* SECTION 2 */
+
+.section2 {
+  text-align: center;
+  padding: 8rem 6rem;
+  background-color: rgb(191, 204, 232);
+}
+
+.title-modes {
+  font-size: 4.8rem;
+  margin-bottom: 1rem;
+}
+
+.subtitle {
+  color: #555;
+  font-size: 2rem;
+  margin-bottom: 6rem;
+}
+
+/* CARDS CONTAINER */
+.cards {
+  display: flex;
+  justify-content: center;
+  gap: 4rem;
+}
+
+/* CARD */
+.card {
+  width: 50rem;
+  height: 50rem;
+  padding: 3.6rem 3.2rem;
+  border: 0.1rem solid #555;
+  border-radius: 1rem;
+  text-align: left;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ICON */
+.icon {
+  width: 6.4rem;
+  height: 6.4rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.8rem;
+}
+
+.user-icon {
+  background: #eaf1ff;
+  align-self: center;
+}
+
+.user-svg,
+.admin-svg {
+  width: 3.5rem;
+}
+
+.admin-icon {
+  background: #ede9ff;
+  align-self: center;
+}
+
+/* TEXT */
+.modes {
+  align-self: center;
+  font-size: 3rem;
+}
+
+.desc {
+  color: #555;
+  font-size: 1.5rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  align-items: center;
+  text-align: center;
+}
+
+/* LIST */
+ul {
+  list-style: none;
+  margin-top: 1.5rem;
+}
+
+ul li {
+  font-size: 1.4rem;
+  color: black;
+  margin-bottom: 1.5rem;
+  padding-left: 1.8rem;
+  position: relative;
+}
+
+ul li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  transform: translate(0, -25%);
+  color: #0a152e;
+  font-size: 3rem;
+  line-height: 1;
+}
+
+/* BUTTONS */
+.primary-btn,
+.secondary-btn {
+  width: 100%;
+  padding: 1.4rem;
+  border-radius: 1rem;
+  font-size: 1.4rem;
+  cursor: pointer;
+  border: none;
+  background: black;
+  color: #fff;
+  text-decoration: none;
+  text-align: center;
+}
+
+.primary-btn:hover,
+.secondary-btn:hover {
+  background: #fff;
+  color: black;
+  border: solid 0.1rem black;
+}

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Digital Queue Management</title>
+  <link rel="stylesheet" href="style/homestyles.css" />
+</head>
+<body> 
+  <!-- SECTION 1 -->
+  <section class="section1">
+    <div class="hero-left">
+      
+      <h1 class="heading">
+        Manage queues
+        efficiently
+      </h1>
+
+      <p class="description">
+        Say goodbye to long waiting lines. Our digital queue system
+        streamlines customer flow, reduces wait times, and improves
+        service efficiency.
+      </p>
+
+      <button class="get-started">
+        Get Started&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→
+      </button>
+
+      <div class="features">
+        <div>
+          <p>Real-time</p>
+          <div>Updates</div>
+        </div>
+        <div>
+          <p>Easy</p>
+          <div>To Use</div>
+        </div>
+        <div>
+          <p>Efficient</p>
+          <div>Service</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <img src="img/homepage pic.jpeg" alt="Queue display screen" />
+    </div>
+  </section>
+
+  <!-- SECTION 2 -->
+  <section class="section2">
+    <h1 class="title-modes">Choose Your Mode</h1>
+    <p class="subtitle">
+      Select how you want to use the digital queue system
+    </p>
+
+    <div class="cards">
+
+      <!-- USER MODE -->
+      <div class="card">
+          <div class="icon user-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="user-svg">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+            </svg>
+
+            
+          </div>
+          <h2 class="modes">User Mode</h2>
+        <p class="desc">
+          Join the queue, check your position, and receive real-time
+          updates on your turn.
+        </p>
+
+        <ul>
+          <li>Join queue instantly</li>
+          <li>Track your position</li>
+          <li>Get notifications</li>
+          <li>No account required</li>
+        </ul>
+
+        <a class="primary-btn" href="user.html">
+          Enter User Mode →
+        </a>
+      </div>
+
+      <!-- ADMIN MODE -->
+      <div class="card">
+        <div class="icon admin-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="admin-svg">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z" />
+          </svg>
+        </div>
+
+        <h2 class="modes">Admin Mode</h2>
+        <p class="desc">
+          Manage queues, call customers, and monitor service
+          efficiency in real-time.
+        </p>
+
+        <ul>
+          <li>Manage multiple queues</li>
+          <li>Call next customer</li>
+          <li>View analytics</li>
+          <li>Secure login required</li>
+        </ul>
+
+        <a class="secondary-btn" href="admin.html">
+          Enter Admin Mode →
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+
+  <script>
+  document.querySelector(".get-started").addEventListener("click", () => {
+    const target = document.querySelector(".section2");
+    const start = window.pageYOffset;
+    const end = target.getBoundingClientRect().top + start;
+    const duration = 450;
+    
+    let startTime = null;
+
+    function scrollAnimation(currentTime) {
+      if (!startTime) startTime = currentTime;
+      const timeElapsed = currentTime - startTime;
+      const progress = Math.min(timeElapsed / duration, 1);
+
+      window.scrollTo(0, start + (end - start) * progress);
+
+      if (timeElapsed < duration) {
+        requestAnimationFrame(scrollAnimation);
+      }
+    }
+
+    requestAnimationFrame(scrollAnimation);
+  });
+</script>
+</body>
+</html>
+
+
+
