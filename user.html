@@ -39,7 +39,7 @@
             <h2 class="active-queue">Active Queues</h2>
           </div>
 
-          <div class="empty-state">
+          <div class="empty-state left-empty-state">
             <div class="empty-icon">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -63,7 +63,7 @@
 
         <!-- RIGHT PANEL -->
         <div class="right-panel">
-          <div class="empty-state">
+          <div class="empty-state right-empty-state">
             <div class="empty-icon">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -122,23 +122,10 @@
           />
         </div>
         <div class="button">
-          <button class="closePopup join-btn">Close</button>
-          <button class="join-btn join">Join Queue</button>
+          <button class="join-btn closePopup">Join Queue</button>
         </div>
       </div>
     </div>
-
-    <!-- <script>
-    // Create a placeholder for Firebase to avoid timing issues
-    window.firebasePromise = new Promise(resolve => {
-      window.firebaseLoaded = resolve;
-    });
-    
-  </script> -->
-
-    <!-- <script src="https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js" ></script>
-  <script src="https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js"></script> -->
-
     <script type="module" src="script/firebase.js"></script>
     <script type="module" src="script/userscript.js"></script>
   </body>

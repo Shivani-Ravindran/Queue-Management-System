@@ -2,82 +2,286 @@ import { db } from "./firebase.js";
 import {
   collection,
   doc,
-  setDoc,
-  getDoc,
-  updateDoc,
-  increment,
+  getDocs,
   runTransaction,
   serverTimestamp,
+  query,
+  orderBy,
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
-//Overlay
-const openBtn = document.querySelector(".primary-btn");
-const closeBtn = document.querySelector(".closePopup");
-const overlay = document.querySelector(".overlay");
-
-openBtn.addEventListener("click", () => {
-  overlay.classList.add("active");
-});
-
-closeBtn.addEventListener("click", () => {
-  overlay.classList.remove("active");
-});
-
-// Close when clicking outside popup
-overlay.addEventListener("click", (e) => {
-  if (e.target === overlay) {
-    overlay.classList.remove("active");
-  }
-});
+// localStorage.clear();
 
 document.addEventListener("DOMContentLoaded", () => {
-  document.querySelector(".join").addEventListener("click", joinQueue);
-});
+  //Overlay
+  const openBtn = document.querySelector(".primary-btn");
+  const closeBtn = document.querySelector(".closePopup");
+  const overlay = document.querySelector(".overlay");
 
-let joinedQueues = {};
-async function joinQueue() {
-  const queueID = document.querySelector(".input").value;
-  const queueRef = doc(db, "Queues", queueID);
-  if (!queueID) {
-    alert("Please enter a Queue ID");
-    return;
-  }
+  openBtn.addEventListener("click", () => {
+    overlay.classList.add("active");
+  });
 
-  try {
-    const result = await runTransaction(db, async (transaction) => {
-      const queueSnap = await transaction.get(queueRef);
-      if (!queueSnap.exists()) throw new Error("Queue does not exist");
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) {
+      overlay.classList.remove("active");
+    }
+  });
 
-      const data = queueSnap.data();
-      if (data.Status == "Paused") throw new Error("Queue is paused");
+  overlay.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+        joinQueue();
+        overlay.classList.remove("active");
+    }
+  });
 
-      const membersRef = collection(db, "Queues", queueID, "Members");
-      const member = doc(membersRef);
+  document.querySelector(".pop-up").addEventListener("click", (e) => {
+    e.stopPropagation();
+  });
 
-      transaction.set(member, {
-        Number: data.Count,
-        TokenNo: member.id,
-        JoinedAt: serverTimestamp(),
+  //JS
+  document.querySelector(".join-btn").addEventListener("click", joinQueue);
+
+  const leftContainer = document.querySelector(".left-empty-state");
+  leftContainer.addEventListener("click", (e) => {
+    const btn = e.target.closest(".queue-item");
+    if (!btn) return;
+
+    document.querySelectorAll(".queue-item").forEach((item) => {
+        item.classList.remove("selected");
+    });
+    btn.classList.add("selected");
+
+    const queueID = btn.dataset.queueId;
+    renderDetails(queueID);
+  });
+
+  const rightContainer = document.querySelector(".right-empty-state");
+  rightContainer.addEventListener("click", (e) => {
+    const btn = e.target.closest(".leave-queue");
+    if (!btn) return;
+
+    const queueID = btn.dataset.queueId;
+    const memberID = btn.dataset.memberId;
+    leaveQueue(queueID, memberID);
+  });
+
+  let joinedQueues = JSON.parse(localStorage.getItem("joinedQueues")) || {};
+  displayQueues();
+
+  async function joinQueue() {
+    const queueID = document.querySelector(".input").value;
+    const queueRef = doc(db, "Queues", queueID);
+    if (!queueID) {
+      alert("Please enter a Queue ID");
+      return;
+    }
+
+    try {
+      const result = await runTransaction(db, async (transaction) => {
+        const queueSnap = await transaction.get(queueRef);
+        if (!queueSnap.exists()) throw new Error("Queue does not exist");
+
+        const data = queueSnap.data();
+        if (data.Status == "Paused") throw new Error("Queue is paused");
+
+        const membersRef = collection(db, "Queues", queueID, "Members");
+        const member = doc(membersRef);
+
+        transaction.set(member, {
+          Number: data.Count,
+          TokenNo: member.id,
+          JoinedAt: serverTimestamp(),
+        });
+
+        transaction.update(queueRef, { Count: data.Count + 1 });
+        return {
+          memberId: member.id,
+          Count: data.Count + 1,
+          Buffer: data.Buffer,
+          QueueName: data.QueueName,
+        };
       });
 
-      transaction.update(queueRef, { Count: data.Count + 1 });
-      return {
-        memberId: member.id,
-        Count: data.Count + 1,
-        Buffer: data.Buffer,
-        QueueName: data.QueueName,
+      joinedQueues[queueID] = {
+        QueueID: queueID,
+        Buffer: result.Buffer,
+        Position: result.Count,
+        QueueName: result.QueueName,
+        TokenNumber: result.memberId,
       };
-    });
-    joinedQueues[queueID] = {
-      Buffer: result.Buffer,
-      Position: result.Count,
-      QueueName: result.QueueName,
-      TokenNumber: result.memberId,
-    };
-    console.log(joinedQueues[queueID]);
-  } catch (err) {
-    alert(err);
-    console.error(err);
+      localStorage.setItem("joinedQueues", JSON.stringify(joinedQueues));
+    } catch (err) {
+      alert(err);
+      console.error(err);
+    }
+    displayQueues();
+    renderDetails(queueID);
   }
-  console.log("Everything worked");
-}
+
+  function displayQueues() {
+    const queues = Object.values(joinedQueues);
+
+    if (queues.length === 0) {
+      leftContainer.innerHTML = `<div class="empty-icon">
+        <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="icon-user"
+        >
+        <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"
+        />
+        </svg>
+        </div>
+        <div class="empty-title">No queues joined yet</div>
+        <div class="empty-text">Click the button above to join one</div>`;
+      return;
+    }
+
+    leftContainer.innerHTML = "";
+
+    queues.forEach((queue) => {
+      const queueHTML = `
+        <button type="button" class="queue-item" data-queue-id="${queue.QueueID}">
+        <p class="queue-name">${queue.QueueName}</p>
+        <div class="queue-number">
+            <div class="queue-item-icon">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="queue-icon"
+                >
+                    <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"
+                    />
+                </svg>
+            </div>
+            <p class="position"> ${queue.Position}</p>
+        </div>
+        </button>
+        `;
+
+      leftContainer.insertAdjacentHTML("beforeend", queueHTML);
+    });
+  }
+
+  function renderDetails(queueID) {
+    const queue = joinedQueues[queueID];
+
+
+    if (!queue) return;
+
+    let status=null;
+    if (queue.Position>1){
+        status = "Waiting in queue"
+    }
+    else{
+        status = "It's your turn now";
+    }
+    rightContainer.innerHTML = `
+    <div class="queue-details">
+        <p class="your-token-number">Your Token Number</p>
+        <p class="token-number">${queue.TokenNumber}</p>
+        <p class="queue-position">Position in Queue: ${queue.Position}</p>
+    </div>
+    <div class="flex">
+        <div class="buffer-status">
+            <p class="current-status">Current Status</p>
+            <p class="status-val">${status}</p>
+        </div>
+        <div class="buffer-status">
+            <p class="buffer">Buffer</p>
+            <p class="buffer-time">${queue.Buffer} minutes</p>
+        </div>
+    </div>
+    <button class="leave-queue" data-queue-id="${queueID}" data-member-id="${queue.TokenNumber}">Leave</button>
+    `;
+  }
+
+  async function leaveQueue(queueID, memberID) {
+    const queueRef = doc(db, "Queues", queueID);
+    const membersRef = collection(db, "Queues", queueID, "Members");
+    const q = query(membersRef, orderBy("Number", "asc"));
+
+    try {
+      await runTransaction(db, async (transaction) => {
+        // Read everything first
+        const queueSnap = await transaction.get(queueRef);
+        if (!queueSnap.exists()) throw new Error("Queue does not exist");
+
+        const memberDocs = await getDocs(q); // read all members
+        if (memberDocs.empty) throw new Error("No members in queue");
+
+        // Find leaving member
+        const leavingDoc = memberDocs.docs.find(
+          (docSnap) => docSnap.id === memberID
+        );
+        if (!leavingDoc) throw new Error("Member does not exist");
+
+        const leavingNumber = leavingDoc.data().Number;
+
+        // Delete leaving member
+        const leavingRef = doc(db, "Queues", queueID, "Members", memberID);
+        transaction.delete(leavingRef);
+
+        // Renumber remaining members
+        memberDocs.forEach((docSnap) => {
+          const data = docSnap.data();
+          if (data.Number > leavingNumber) {
+            transaction.update(
+              doc(db, "Queues", queueID, "Members", docSnap.id),
+              { Number: data.Number - 1 }
+            );
+          }
+        });
+
+        // Decrement queue count
+        const currentCount = queueSnap.data().Count || 0;
+        transaction.update(queueRef, { Count: Math.max(currentCount - 1, 0) });
+      });
+
+      // Update local state & UI
+      delete joinedQueues[queueID];
+      localStorage.setItem("joinedQueues", JSON.stringify(joinedQueues));
+      displayQueues();
+
+      rightContainer.innerHTML = `
+      <div class="empty-state">
+            <div class="empty-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="icon-user"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"
+                />
+              </svg>
+            </div>
+          <h2 class="empty-title">Select a queue to view</h2>
+          <p class="empty-text">Choose from the list on the left</p>
+      </div>
+    `;
+
+      console.log(`Member ${memberID} removed from queue ${queueID}`);
+    } catch (err) {
+      alert(err);
+      console.error(err);
+    }
+  }
+});
