@@ -3,10 +3,12 @@ import {
   collection,
   doc,
   getDocs,
+  getDoc,
   runTransaction,
   serverTimestamp,
   query,
   orderBy,
+  onSnapshot
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
 // localStorage.clear();
@@ -14,7 +16,6 @@ import {
 document.addEventListener("DOMContentLoaded", () => {
   //Overlay
   const openBtn = document.querySelector(".primary-btn");
-  const closeBtn = document.querySelector(".closePopup");
   const overlay = document.querySelector(".overlay");
 
   openBtn.addEventListener("click", () => {
@@ -39,40 +40,48 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   //JS
-  document.querySelector(".join-btn").addEventListener("click", joinQueue);
-
-  const leftContainer = document.querySelector(".left-empty-state");
-  leftContainer.addEventListener("click", (e) => {
-    const btn = e.target.closest(".queue-item");
-    if (!btn) return;
-
-    document.querySelectorAll(".queue-item").forEach((item) => {
-        item.classList.remove("selected");
+  document.querySelector(".join-btn").addEventListener("click", () => 
+    { 
+      joinQueue();
+      overlay.classList.remove("active");
     });
-    btn.classList.add("selected");
-
-    const queueID = btn.dataset.queueId;
-    renderDetails(queueID);
-  });
-
-  const rightContainer = document.querySelector(".right-empty-state");
-  rightContainer.addEventListener("click", (e) => {
-    const btn = e.target.closest(".leave-queue");
-    if (!btn) return;
-
-    const queueID = btn.dataset.queueId;
-    const memberID = btn.dataset.memberId;
-    leaveQueue(queueID, memberID);
-  });
-
-  let joinedQueues = JSON.parse(localStorage.getItem("joinedQueues")) || {};
-  displayQueues();
-
-  async function joinQueue() {
+    
+    const leftContainer = document.querySelector(".left-empty-state");
+    leftContainer.addEventListener("click", (e) => {
+      const btn = e.target.closest(".queue-item");
+      if (!btn) return;
+      
+      document.querySelectorAll(".queue-item").forEach((item) => {
+        item.classList.remove("selected");
+      });
+      btn.classList.add("selected");
+      
+      const queueID = btn.dataset.queueId;
+      renderDetails(queueID);
+    });
+    
+    const rightContainer = document.querySelector(".right-empty-state");
+    rightContainer.addEventListener("click", (e) => {
+      const btn = e.target.closest(".leave-queue");
+      if (!btn) return;
+      
+      const queueID = btn.dataset.queueId;
+      const memberID = btn.dataset.memberId;
+      leaveQueue(queueID, memberID);
+    });
+    
+    let joinedQueues = JSON.parse(localStorage.getItem("joinedQueues")) || {};
+    displayQueues();
+    
+    async function joinQueue() {
     const queueID = document.querySelector(".input").value;
     const queueRef = doc(db, "Queues", queueID);
     if (!queueID) {
       alert("Please enter a Queue ID");
+      return;
+    }
+    if (joinedQueues[queueID]) {
+      alert("You already joined this queue");
       return;
     }
 
@@ -105,7 +114,6 @@ document.addEventListener("DOMContentLoaded", () => {
       joinedQueues[queueID] = {
         QueueID: queueID,
         Buffer: result.Buffer,
-        Position: result.Count,
         QueueName: result.QueueName,
         TokenNumber: result.memberId,
       };
@@ -149,63 +157,94 @@ document.addEventListener("DOMContentLoaded", () => {
       const queueHTML = `
         <button type="button" class="queue-item" data-queue-id="${queue.QueueID}">
         <p class="queue-name">${queue.QueueName}</p>
-        <div class="queue-number">
-            <div class="queue-item-icon">
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="queue-icon"
-                >
-                    <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"
-                    />
-                </svg>
-            </div>
-            <p class="position"> ${queue.Position}</p>
-        </div>
         </button>
         `;
-
       leftContainer.insertAdjacentHTML("beforeend", queueHTML);
     });
   }
 
+  let unsubscribeMemberListener = null;
   function renderDetails(queueID) {
+    if (unsubscribeMemberListener) {
+      unsubscribeMemberListener();
+      unsubscribeMemberListener = null;
+    }
+
     const queue = joinedQueues[queueID];
-
-
     if (!queue) return;
 
-    let status=null;
-    if (queue.Position>1){
-        status = "Waiting in queue"
-    }
-    else{
-        status = "It's your turn now";
-    }
-    rightContainer.innerHTML = `
-    <div class="queue-details">
-        <p class="your-token-number">Your Token Number</p>
-        <p class="token-number">${queue.TokenNumber}</p>
-        <p class="queue-position">Position in Queue: ${queue.Position}</p>
-    </div>
-    <div class="flex">
-        <div class="buffer-status">
-            <p class="current-status">Current Status</p>
-            <p class="status-val">${status}</p>
-        </div>
-        <div class="buffer-status">
-            <p class="buffer">Buffer</p>
-            <p class="buffer-time">${queue.Buffer} minutes</p>
-        </div>
-    </div>
-    <button class="leave-queue" data-queue-id="${queueID}" data-member-id="${queue.TokenNumber}">Leave</button>
-    `;
+    const memberRef = doc(db, "Queues", queueID, "Members", queue.TokenNumber );
+    let servedShown = false;
+    unsubscribeMemberListener = onSnapshot(memberRef, (docSnap) => {
+      if(!docSnap.exists()){
+        if(servedShown) return;
+        
+        const queueRef = doc(db, "Queues", queueID);
+        getDoc(queueRef).then((queueSnap) => {
+            if (!queueSnap.exists()) {
+              alert("This queue was deleted by the admin");
+            } 
+            else {
+                if (!servedShown) {  
+                  servedShown = true;
+                  alert("You have been served");
+                }
+            }
+          delete joinedQueues[queueID];
+          localStorage.setItem("joinedQueues", JSON.stringify(joinedQueues));
+          displayQueues();
+          rightContainer.innerHTML = `
+            <div class="empty-state">
+                  <div class="empty-icon">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      class="icon-user"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"
+                      />
+                    </svg>
+                  </div>
+                <h2 class="empty-title">Select a queue to view</h2>
+                <p class="empty-text">Choose from the list on the left</p>
+            </div>`;
+          });
+          return;
+        }
+      const data = docSnap.data();
+      const status = data.Number > 0 ? "Waiting in queue" : "It's your turn now";
+      rightContainer.innerHTML = `
+      <div class="queue-details">
+          <p class="your-token-number">Your Token Number</p>
+          <p class="token-number">${queue.TokenNumber}</p>
+          <p class="queue-position">Position in Queue: ${data.Number+1}</p>
+      </div>
+      <div class="flex">
+          <div class="buffer-status">
+              <p class="current-status">Current Status</p>
+              <p class="status-val">${status}</p>
+          </div>
+          <div class="buffer-status">
+              <p class="buffer">Buffer</p>
+              <p class="buffer-time">${queue.Buffer} minutes</p>
+          </div>
+      </div>
+      <button class="leave-queue" data-queue-id="${queueID}" data-member-id="${queue.TokenNumber}">Leave</button>
+      
+      <div class="flex-note">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="note-icon">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+        </svg>
+        <p class="note">You will be notified when it is your turn. Please note that you will be moved to end of queue after the specified buffer time</p>
+      </div>
+      `;
+    })
   }
 
   async function leaveQueue(queueID, memberID) {
@@ -213,6 +252,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const membersRef = collection(db, "Queues", queueID, "Members");
     const q = query(membersRef, orderBy("Number", "asc"));
 
+    if (unsubscribeMemberListener) {
+      unsubscribeMemberListener();
+      unsubscribeMemberListener = null;
+    }
     try {
       await runTransaction(db, async (transaction) => {
         // Read everything first
