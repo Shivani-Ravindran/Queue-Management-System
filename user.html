@@ -86,8 +86,6 @@
         </div>
       </section>
     </div>
-
-    <!-- HELP BUTTON -->
     <button class="help-btn">?</button>
 
     <!-- JOIN QUEUE MODAL (static) -->
@@ -126,6 +124,74 @@
         </div>
       </div>
     </div>
+
+    <!-- HELP BUTTON MODAL (static) -->
+    <div class="overlay-help">
+      <div class="pop-up-help">
+        <p class="need-help">Need Help?</p>
+        <ul class="help-list">
+          <li>
+            <strong>What is a Queue ID and how do I get it</strong>
+            <p>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A Queue ID is a
+              unique, case-sensitive code given by the admin to join their
+              queue. Make sure you enter it exactly as provided. You can join
+              each queue only once.
+            </p>
+          </li>
+          <li>
+            <strong>What is buffer time?</strong>
+            <p>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; After you reach
+              the front of the queue, buffer time is the period after which you
+              are automatically moved to the end of the queue. We strongly
+              recommend arriving 5-10 minutes before your turn.
+            </p>
+          </li>
+          <li>
+            <strong>What happens when it's my turn?</strong>
+            <p>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;When it's your
+              turn, your status will update to show that it's your turn, and
+              you'll receive an alert.
+            </p>
+          </li>
+          <li>
+            <strong>Can I join more than one queue?</strong>
+            <p>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Absolutely. You
+              can join multiple queues at once, making it easier to manage
+              multiple appointments.
+            </p>
+          </li>
+          <li>
+            <strong>What happens if I leave a queue?</strong>
+            <p>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Leaving a queue
+              means you are removed permanently. Rejoining later will not
+              guarantee the same position, so please leave carefully.
+            </p>
+          </li>
+        </ul>
+        <button class="x-button">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="x-mark"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M6 18 18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+
     <script type="module" src="script/firebase.js"></script>
     <script type="module" src="script/userscript.js"></script>
   </body>

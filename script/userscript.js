@@ -11,10 +11,8 @@ import {
   onSnapshot
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
-// localStorage.clear();
-
 document.addEventListener("DOMContentLoaded", () => {
-  //Overlay
+//JOIN OVERLAY
   const openBtn = document.querySelector(".primary-btn");
   const overlay = document.querySelector(".overlay");
 
@@ -39,7 +37,28 @@ document.addEventListener("DOMContentLoaded", () => {
     e.stopPropagation();
   });
 
-  //JS
+
+
+//HELP OVERLAY
+  const openHelpBtn = document.querySelector(".help-btn");
+  const helpOverlay = document.querySelector(".overlay-help"); 
+  const closeBtn = document.querySelector(".x-button");
+
+  openHelpBtn.addEventListener("click", () => {
+    helpOverlay.classList.add("active");
+  });
+
+  closeBtn.addEventListener("click", (e) => {
+      helpOverlay.classList.remove("active");
+  });
+
+  document.querySelector(".pop-up-help").addEventListener("click", (e) => {
+    e.stopPropagation();
+  });
+
+
+
+//JS
   document.querySelector(".join-btn").addEventListener("click", () => 
     { 
       joinQueue();
@@ -126,28 +145,14 @@ document.addEventListener("DOMContentLoaded", () => {
     renderDetails(queueID);
   }
 
+
+
+//DISPLAY QUEUE ON LEFT PANEL FUNCTION
   function displayQueues() {
     const queues = Object.values(joinedQueues);
 
     if (queues.length === 0) {
-      leftContainer.innerHTML = `<div class="empty-icon">
-        <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        class="icon-user"
-        >
-        <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"
-        />
-        </svg>
-        </div>
-        <div class="empty-title">No queues joined yet</div>
-        <div class="empty-text">Click the button above to join one</div>`;
+      renderLeftEmptyState();
       return;
     }
 
@@ -163,13 +168,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+
+
+//RENDER DETAILS ON RIGHT PANEL FUNCTION  
   let unsubscribeMemberListener = null;
   function renderDetails(queueID) {
     if (unsubscribeMemberListener) {
       unsubscribeMemberListener();
       unsubscribeMemberListener = null;
     }
-
     const queue = joinedQueues[queueID];
     if (!queue) return;
 
@@ -193,27 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
           delete joinedQueues[queueID];
           localStorage.setItem("joinedQueues", JSON.stringify(joinedQueues));
           displayQueues();
-          rightContainer.innerHTML = `
-            <div class="empty-state">
-                  <div class="empty-icon">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="1.5"
-                      stroke="currentColor"
-                      class="icon-user"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"
-                      />
-                    </svg>
-                  </div>
-                <h2 class="empty-title">Select a queue to view</h2>
-                <p class="empty-text">Choose from the list on the left</p>
-            </div>`;
+          renderRightEmptyState();
           });
           return;
         }
@@ -244,9 +231,15 @@ document.addEventListener("DOMContentLoaded", () => {
         <p class="note">You will be notified when it is your turn. Please note that you will be moved to end of queue after the specified buffer time</p>
       </div>
       `;
+      if (status === "It's your turn now"){
+        alert("It's your turn now");
+      }
     })
   }
 
+
+
+//LEAVE QUEUE FUNCTION
   async function leaveQueue(queueID, memberID) {
     const queueRef = doc(db, "Queues", queueID);
     const membersRef = collection(db, "Queues", queueID, "Members");
@@ -326,5 +319,54 @@ document.addEventListener("DOMContentLoaded", () => {
       alert(err);
       console.error(err);
     }
+  }
+
+
+
+//EMPTY STATE FUNCTIONS
+  function renderRightEmptyState(){
+    rightContainer.innerHTML = `
+      <div class="empty-state">
+            <div class="empty-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="icon-user"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"
+                />
+              </svg>
+            </div>
+          <h2 class="empty-title">Select a queue to view</h2>
+          <p class="empty-text">Choose from the list on the left</p>
+      </div>`;
+  }
+
+  function renderLeftEmptyState(){
+    leftContainer.innerHTML = `
+      <div class="empty-icon">
+      <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      class="icon-user"
+      >
+      <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"
+      />
+      </svg>
+      </div>
+      <div class="empty-title">No queues joined yet</div>
+      <div class="empty-text">Click the button above to join one</div>`;
   }
 });

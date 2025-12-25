@@ -48,7 +48,6 @@ header {
   display: block;
 }
 
-/* BUTTON */
 .primary-btn {
   background: #0a152e;
   color: white;
@@ -57,14 +56,9 @@ header {
   cursor: pointer;
   padding: 1.2rem 2.4rem;
   border: none;
-
   position: absolute;
   top: 3rem;
   right: 3rem;
-}
-
-.plus {
-  font-size: 2cqmax;
 }
 
 /* MAIN */
@@ -153,22 +147,7 @@ section {
   font-size: 1.5rem;
 }
 
-/* HELP BUTTON */
-.help-btn {
-  position: fixed;
-  bottom: 4rem;
-  right: 4rem;
-  width: 5.6rem;
-  height: 5.6rem;
-  border-radius: 50%;
-  border: none;
-  background: #1a1a1a;
-  color: white;
-  font-size: 2.4rem;
-  cursor: pointer;
-}
-
-/* Overlay */
+/* Join Overlay */
 .overlay {
   position: fixed;
   inset: 0;
@@ -179,9 +158,8 @@ section {
   z-index: 1000;
 }
 
-/* Popup box */
 .pop-up {
-  background: rgb(10, 21, 46, 0.9);
+  background: rgba(10, 21, 46, 0.9);
   padding: 3rem 3rem 3rem 3rem;
   border-radius: 1.6rem;
   width: 70rem;
@@ -189,7 +167,6 @@ section {
   text-align: center;
   display: flex;
   flex-direction: column;
-  align-items: left;
   justify-content: center;
   gap: 3rem;
 }
@@ -236,12 +213,10 @@ label {
   display: block;
 }
 
-/* Show popup */
 .overlay.active {
   display: flex;
 }
 
-/* JOIN BUTTON */
 .join-btn {
   width: auto;
   padding: 1rem 1.8rem;
@@ -258,6 +233,88 @@ label {
   background-color: white;
   color: black;
 }
+
+/*Help Overlay */
+.help-btn {
+  position: fixed;
+  bottom: 4rem;
+  right: 4rem;
+  width: 5.6rem;
+  height: 5.6rem;
+  border-radius: 50%;
+  border: none;
+  background: #0a152e;
+  color: white;
+  font-size: 2.4rem;
+  cursor: pointer;
+}
+
+.overlay-help {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.pop-up-help {
+  background: rgba(10, 21, 46, 0.9);
+  padding: 5rem 3rem 3rem 3rem;
+  border-radius: 1.6rem;
+  width: 70rem;
+  height: auto;
+  text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+
+}
+
+.overlay-help.active {
+  display: flex;
+}
+
+.x-button{
+  width: 2rem; 
+  height: auto;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+}
+
+.x-mark{
+  width: 2rem;
+  height: auto;
+  color: rgba(255, 255, 255, 0.889);
+}
+
+.need-help{
+  color: rgba(255, 255, 255, 0.889);
+  font-size: 2.5rem;;
+}
+
+.help-list{
+  color: rgba(255, 255, 255, 0.889);
+  text-align: left;
+  font-size: 1.5rem;
+  content: none;
+}
+
+.help-list li:not(:first-child){
+  margin-top: 4rem;
+}
+
+.help-list li p{
+  margin-top: 1rem;
+  color: rgba(255, 255, 255, 0.889);
+}
+/*Done*/
 
 /* JS Styles */
 /* Left Panel */
