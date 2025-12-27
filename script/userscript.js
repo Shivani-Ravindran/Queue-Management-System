@@ -8,11 +8,14 @@ import {
   serverTimestamp,
   query,
   orderBy,
-  onSnapshot
+  onSnapshot,
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
+let qrScanner;
+let isScanning = false;
+
 document.addEventListener("DOMContentLoaded", () => {
-//JOIN OVERLAY
+  //JOIN OVERLAY
   const openBtn = document.querySelector(".primary-btn");
   const overlay = document.querySelector(".overlay");
 
@@ -20,16 +23,21 @@ document.addEventListener("DOMContentLoaded", () => {
     overlay.classList.add("active");
   });
 
-  overlay.addEventListener("click", (e) => {
+  overlay.addEventListener("click", async (e) => {
     if (e.target === overlay) {
+      overlay.classList.remove("active");
+      await stopScannerIfRunning();
+
+      joinContent.style.display = "block";
+      qrScannerDiv.style.display = "none";
       overlay.classList.remove("active");
     }
   });
 
   overlay.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
-        joinQueue();
-        overlay.classList.remove("active");
+      joinQueue();
+      overlay.classList.remove("active");
     }
   });
 
@@ -38,10 +46,63 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 
+  
+  //QR button
+  async function stopScannerIfRunning() {
+    if (isScanning) {
+      isScanning = false;
+      await qrScanner.stop();
+    }
+  }
 
-//HELP OVERLAY
+  const scanBtn = document.querySelector(".QR-btn");
+  const joinContent = document.querySelector(".join-content");
+  const qrScannerDiv = document.getElementById("qr-scanner");
+  qrScanner = new Html5Qrcode("qr-scanner");
+
+  scanBtn.addEventListener("click", () => {
+    if (isScanning) return;
+
+    joinContent.style.display = "none";
+    qrScannerDiv.style.display = "block";
+
+    isScanning = true;
+
+    qrScanner.start(
+      { facingMode: "environment" },
+      { fps: 10, qrbox: 250 },
+      async (decodedText) => {
+        isScanning = false;
+        await qrScanner.stop();
+        overlay.classList.remove("active");
+
+        const inputValue = decodedText.trim();
+        let queueID;
+        try {
+          const url = new URL(inputValue);
+          queueID = url.searchParams.get("queueId") || inputValue;
+        } catch (e) {
+          queueID = inputValue;
+        }
+
+        document.querySelector(".input").value = queueID;
+
+        await joinQueue();
+        await qrScanner.clear();
+        qrScanner = new Html5Qrcode("qr-scanner");
+
+        joinContent.style.display = "block"; //reset UI
+        qrScannerDiv.style.display = "none";
+      },
+      () => {}
+    );
+  });
+
+
+
+  //HELP OVERLAY
   const openHelpBtn = document.querySelector(".help-btn");
-  const helpOverlay = document.querySelector(".overlay-help"); 
+  const helpOverlay = document.querySelector(".overlay-help");
   const closeBtn = document.querySelector(".x-button");
 
   openHelpBtn.addEventListener("click", () => {
@@ -49,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   closeBtn.addEventListener("click", (e) => {
-      helpOverlay.classList.remove("active");
+    helpOverlay.classList.remove("active");
   });
 
   document.querySelector(".pop-up-help").addEventListener("click", (e) => {
@@ -58,41 +119,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-//JS
-  document.querySelector(".join-btn").addEventListener("click", () => 
-    { 
-      joinQueue();
-      overlay.classList.remove("active");
+  //JS
+  document.querySelector(".join-btn").addEventListener("click", () => {
+    joinQueue();
+    overlay.classList.remove("active");
+  });
+
+  const leftContainer = document.querySelector(".left-empty-state");
+  leftContainer.addEventListener("click", (e) => {
+    const btn = e.target.closest(".queue-item");
+    if (!btn) return;
+
+    document.querySelectorAll(".queue-item").forEach((item) => {
+      item.classList.remove("selected");
     });
-    
-    const leftContainer = document.querySelector(".left-empty-state");
-    leftContainer.addEventListener("click", (e) => {
-      const btn = e.target.closest(".queue-item");
-      if (!btn) return;
-      
-      document.querySelectorAll(".queue-item").forEach((item) => {
-        item.classList.remove("selected");
-      });
-      btn.classList.add("selected");
-      
-      const queueID = btn.dataset.queueId;
-      renderDetails(queueID);
-    });
-    
-    const rightContainer = document.querySelector(".right-empty-state");
-    rightContainer.addEventListener("click", (e) => {
-      const btn = e.target.closest(".leave-queue");
-      if (!btn) return;
-      
-      const queueID = btn.dataset.queueId;
-      const memberID = btn.dataset.memberId;
-      leaveQueue(queueID, memberID);
-    });
-    
-    let joinedQueues = JSON.parse(localStorage.getItem("joinedQueues")) || {};
-    displayQueues();
-    
-    async function joinQueue() {
+    btn.classList.add("selected");
+
+    const queueID = btn.dataset.queueId;
+    renderDetails(queueID);
+  });
+
+  const rightContainer = document.querySelector(".right-empty-state");
+  rightContainer.addEventListener("click", (e) => {
+    const btn = e.target.closest(".leave-queue");
+    if (!btn) return;
+
+    const queueID = btn.dataset.queueId;
+    const memberID = btn.dataset.memberId;
+    leaveQueue(queueID, memberID);
+  });
+
+  let joinedQueues = JSON.parse(localStorage.getItem("joinedQueues")) || {};
+  displayQueues();
+
+
+
+  //JOIN QUEUE FUNCTION
+  async function joinQueue() {
     const queueID = document.querySelector(".input").value;
     const queueRef = doc(db, "Queues", queueID);
     if (!queueID) {
@@ -126,6 +189,7 @@ document.addEventListener("DOMContentLoaded", () => {
           memberId: member.id,
           Count: data.Count + 1,
           Buffer: data.Buffer,
+          TurnStartedAt: data.Count === 0 ? serverTimestamp() : null,
           QueueName: data.QueueName,
         };
       });
@@ -147,17 +211,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-//DISPLAY QUEUE ON LEFT PANEL FUNCTION
+  //DISPLAY QUEUE ON LEFT PANEL FUNCTION
   function displayQueues() {
     const queues = Object.values(joinedQueues);
-
     if (queues.length === 0) {
       renderLeftEmptyState();
       return;
     }
-
     leftContainer.innerHTML = "";
-
     queues.forEach((queue) => {
       const queueHTML = `
         <button type="button" class="queue-item" data-queue-id="${queue.QueueID}">
@@ -170,7 +231,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-//RENDER DETAILS ON RIGHT PANEL FUNCTION  
+  //RENDER DETAILS ON RIGHT PANEL FUNCTION
   let unsubscribeMemberListener = null;
   function renderDetails(queueID) {
     if (unsubscribeMemberListener) {
@@ -179,38 +240,29 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     const queue = joinedQueues[queueID];
     if (!queue) return;
-
-    const memberRef = doc(db, "Queues", queueID, "Members", queue.TokenNumber );
-    let servedShown = false;
+    const memberRef = doc(db, "Queues", queueID, "Members", queue.TokenNumber);
+    let hasExited = false;
+    let alertShown = false;
     unsubscribeMemberListener = onSnapshot(memberRef, (docSnap) => {
-      if(!docSnap.exists()){
-        if(servedShown) return;
-        
-        const queueRef = doc(db, "Queues", queueID);
-        getDoc(queueRef).then((queueSnap) => {
-            if (!queueSnap.exists()) {
-              alert("This queue was deleted by the admin");
-            } 
-            else {
-                if (!servedShown) {  
-                  servedShown = true;
-                  alert("You have been served");
-                }
-            }
-          delete joinedQueues[queueID];
-          localStorage.setItem("joinedQueues", JSON.stringify(joinedQueues));
-          displayQueues();
-          renderRightEmptyState();
-          });
-          return;
-        }
+      if (docSnap.metadata.fromCache) return;
+      if (!docSnap.exists()) {
+        if (hasExited) return;
+        hasExited = true;
+        alert("You are no longer in the queue");
+        delete joinedQueues[queueID];
+        localStorage.setItem("joinedQueues", JSON.stringify(joinedQueues));
+        displayQueues();
+        renderRightEmptyState();
+        return;
+      }
       const data = docSnap.data();
-      const status = data.Number > 0 ? "Waiting in queue" : "It's your turn now";
+      const status =
+        data.Number > 0 ? "Waiting in queue" : "It's your turn now";
       rightContainer.innerHTML = `
       <div class="queue-details">
           <p class="your-token-number">Your Token Number</p>
           <p class="token-number">${queue.TokenNumber}</p>
-          <p class="queue-position">Position in Queue: ${data.Number+1}</p>
+          <p class="queue-position">Position in Queue: ${data.Number + 1}</p>
       </div>
       <div class="flex">
           <div class="buffer-status">
@@ -222,7 +274,9 @@ document.addEventListener("DOMContentLoaded", () => {
               <p class="buffer-time">${queue.Buffer} minutes</p>
           </div>
       </div>
-      <button class="leave-queue" data-queue-id="${queueID}" data-member-id="${queue.TokenNumber}">Leave</button>
+      <button class="leave-queue" data-queue-id="${queueID}" data-member-id="${
+        queue.TokenNumber
+      }">Leave</button>
       
       <div class="flex-note">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="note-icon">
@@ -231,15 +285,16 @@ document.addEventListener("DOMContentLoaded", () => {
         <p class="note">You will be notified when it is your turn. Please note that you will be moved to end of queue after the specified buffer time</p>
       </div>
       `;
-      if (status === "It's your turn now"){
+      if (status === "It's your turn now" && !alertShown) {
+        alertShown = true;
         alert("It's your turn now");
       }
-    })
+    });
   }
 
 
 
-//LEAVE QUEUE FUNCTION
+  //LEAVE QUEUE FUNCTION
   async function leaveQueue(queueID, memberID) {
     const queueRef = doc(db, "Queues", queueID);
     const membersRef = collection(db, "Queues", queueID, "Members");
@@ -262,7 +317,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const leavingDoc = memberDocs.docs.find(
           (docSnap) => docSnap.id === memberID
         );
-        if (!leavingDoc) throw new Error("Member does not exist");
+        if (!leavingDoc) return;
 
         const leavingNumber = leavingDoc.data().Number;
 
@@ -321,10 +376,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-
-
-//EMPTY STATE FUNCTIONS
-  function renderRightEmptyState(){
+  //EMPTY STATE FUNCTIONS
+  function renderRightEmptyState() {
     rightContainer.innerHTML = `
       <div class="empty-state">
             <div class="empty-icon">
@@ -348,7 +401,7 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>`;
   }
 
-  function renderLeftEmptyState(){
+  function renderLeftEmptyState() {
     leftContainer.innerHTML = `
       <div class="empty-icon">
       <svg

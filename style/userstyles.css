@@ -165,6 +165,9 @@ section {
   width: 70rem;
   height: auto;
   text-align: center;
+}
+
+.join-content{
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -190,7 +193,7 @@ section {
 
 .button {
   display: flex;
-  gap: 2rem;
+  gap: 1rem;
   justify-content: end;
 }
 
@@ -217,7 +220,7 @@ label {
   display: flex;
 }
 
-.join-btn {
+.join-btn, .QR-btn {
   width: auto;
   padding: 1rem 1.8rem;
   font-size: 1.8rem;
