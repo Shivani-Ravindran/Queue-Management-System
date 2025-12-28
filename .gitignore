@@ -1,0 +1,11 @@
+# macOS junk files
+.DS_Store
+
+# Node / JS dependencies
+node_modules/
+
+# Logs
+*.log
+
+# OS temp files
+*.tmp
