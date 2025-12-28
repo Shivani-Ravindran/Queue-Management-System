@@ -84,7 +84,7 @@ section {
 
 .left-panel {
   width: 44rem;
-  height: 50rem;
+  height: 54rem;
   display: flex;
   flex-direction: column;
 }
@@ -165,6 +165,9 @@ section {
   width: 70rem;
   height: auto;
   text-align: center;
+}
+
+.join-content{
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -190,7 +193,7 @@ section {
 
 .button {
   display: flex;
-  gap: 2rem;
+  gap: 1rem;
   justify-content: end;
 }
 
@@ -217,7 +220,7 @@ label {
   display: flex;
 }
 
-.join-btn {
+.join-btn, .QR-btn {
   width: auto;
   padding: 1rem 1.8rem;
   font-size: 1.8rem;
@@ -416,6 +419,7 @@ label {
   flex-grow: 1;
   padding: 1rem 1rem 2rem 1rem;
   display: flex;
+  gap: 2rem;
   flex-direction: column;
   justify-content: space-between;
 }
@@ -423,12 +427,15 @@ label {
 .current-status,
 .status-val,
 .buffer,
-.buffer-time {
+.buffer-time,
+.ET,
+.EWT {
   font-size: 2rem;
 }
 
 .current-status,
-.buffer {
+.buffer,
+.ET {
   text-align: left;
 }
 

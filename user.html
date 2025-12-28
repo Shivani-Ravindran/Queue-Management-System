@@ -91,37 +91,41 @@
     <!-- JOIN QUEUE MODAL (static) -->
     <div class="overlay">
       <div class="pop-up">
-        <div class="bar-icon">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="three-bars"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+        <div class="join-content">
+          <div class="bar-icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="three-bars"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+              />
+            </svg>
+          </div>
+          <h2 class="join-queue">Join a Queue</h2>
+          <p class="modal-subtitle">
+            Enter a Queue ID to receive your digital token
+          </p>
+          <div class="input-box">
+            <label>Queue ID</label>
+            <input
+              type="text"
+              placeholder="Enter Queue ID (e.g., Q123456)"
+              class="input"
             />
-          </svg>
+          </div>
+          <div class="button">
+            <button class="join-btn closePopup">Enter Queue ID</button>
+            <button class="QR-btn">Scan QR instead</button>
+          </div>
         </div>
-        <h2 class="join-queue">Join a Queue</h2>
-        <p class="modal-subtitle">
-          Enter a Queue ID to receive your digital token
-        </p>
-        <div class="input-box">
-          <label>Queue ID</label>
-          <input
-            type="text"
-            placeholder="Enter Queue ID (e.g., Q123456)"
-            class="input"
-          />
-        </div>
-        <div class="button">
-          <button class="join-btn closePopup">Join Queue</button>
-        </div>
+        <div id="qr-scanner" style="display: none;"></div>
       </div>
     </div>
 
@@ -131,7 +135,7 @@
         <p class="need-help">Need Help?</p>
         <ul class="help-list">
           <li>
-            <strong>What is a Queue ID and how do I get it</strong>
+            <strong>What is a Queue ID and how do I get it?</strong>
             <p>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A Queue ID is a
               unique, case-sensitive code given by the admin to join their
@@ -193,6 +197,7 @@
     </div>
 
     <script type="module" src="script/firebase.js"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
     <script type="module" src="script/userscript.js"></script>
   </body>
 </html>
