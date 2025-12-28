@@ -189,7 +189,8 @@ document.addEventListener("DOMContentLoaded", () => {
           memberId: member.id,
           Count: data.Count + 1,
           Buffer: data.Buffer,
-          TurnStartedAt: data.Count === 0 ? serverTimestamp() : null,
+          // TurnStartedAt: data.Count === 0 ? serverTimestamp() : null,
+          AvgWaitTime: data.AvgWaitTime,
           QueueName: data.QueueName,
         };
       });
@@ -197,6 +198,7 @@ document.addEventListener("DOMContentLoaded", () => {
       joinedQueues[queueID] = {
         QueueID: queueID,
         Buffer: result.Buffer,
+        AvgWaitTime: result.AvgWaitTime,
         QueueName: result.QueueName,
         TokenNumber: result.memberId,
       };
@@ -233,6 +235,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   //RENDER DETAILS ON RIGHT PANEL FUNCTION
   let unsubscribeMemberListener = null;
+  let unsubscribeQueueListener = null;
   function renderDetails(queueID) {
     if (unsubscribeMemberListener) {
       unsubscribeMemberListener();
@@ -240,11 +243,38 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     const queue = joinedQueues[queueID];
     if (!queue) return;
+
+    const queueRef = doc(db, "Queues", queueID);
+    let avgWaitTime = 0;
+    let lastMemberData = null;
+
+    if (unsubscribeQueueListener) {
+      unsubscribeQueueListener();
+      unsubscribeQueueListener = null;
+    }
+
+    unsubscribeQueueListener = onSnapshot(queueRef, (queueSnap) => {
+      if (!queueSnap.exists()) return;
+      avgWaitTime = queueSnap.data().AvgWaitTime || 0;
+
+      if (lastMemberData) {
+        const WT =
+          lastMemberData.Number === 0
+            ? "Being served"
+            : avgWaitTime * lastMemberData.Number + " min";
+
+        const ewtEl = document.querySelector(".EWT");
+        if (ewtEl) {
+          ewtEl.textContent = WT;
+        }
+      }
+    });
+    
     const memberRef = doc(db, "Queues", queueID, "Members", queue.TokenNumber);
     let hasExited = false;
     let alertShown = false;
     unsubscribeMemberListener = onSnapshot(memberRef, (docSnap) => {
-      if (docSnap.metadata.fromCache) return;
+      if (docSnap.metadata.fromCache && docSnap.exists()) return;
       if (!docSnap.exists()) {
         if (hasExited) return;
         hasExited = true;
@@ -256,8 +286,10 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
       const data = docSnap.data();
+      lastMemberData = data;
       const status =
         data.Number > 0 ? "Waiting in queue" : "It's your turn now";
+      const WT = data.Number === 0 ? "Being served" : avgWaitTime * data.Number + " min";
       rightContainer.innerHTML = `
       <div class="queue-details">
           <p class="your-token-number">Your Token Number</p>
@@ -272,6 +304,10 @@ document.addEventListener("DOMContentLoaded", () => {
           <div class="buffer-status">
               <p class="buffer">Buffer</p>
               <p class="buffer-time">${queue.Buffer} minutes</p>
+          </div>
+          <div class="buffer-status">
+              <p class="ET">Estimated Wait Time</p>
+              <p class="EWT">${WT}</p>
           </div>
       </div>
       <button class="leave-queue" data-queue-id="${queueID}" data-member-id="${
@@ -304,6 +340,10 @@ document.addEventListener("DOMContentLoaded", () => {
       unsubscribeMemberListener();
       unsubscribeMemberListener = null;
     }
+    if (unsubscribeQueueListener) {
+      unsubscribeQueueListener();
+      unsubscribeQueueListener = null;
+    }
     try {
       await runTransaction(db, async (transaction) => {
         // Read everything first
@@ -320,6 +360,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!leavingDoc) return;
 
         const leavingNumber = leavingDoc.data().Number;
+        const isFrontLeaving = leavingNumber === 0;
 
         // Delete leaving member
         const leavingRef = doc(db, "Queues", queueID, "Members", memberID);
@@ -329,10 +370,15 @@ document.addEventListener("DOMContentLoaded", () => {
         memberDocs.forEach((docSnap) => {
           const data = docSnap.data();
           if (data.Number > leavingNumber) {
+            const newNumber = data.Number - 1;
+
+            const updateData = { Number: newNumber };
+            if (isFrontLeaving && newNumber === 0) {
+              updateData.ServiceStartedAt = serverTimestamp();
+            }
+
             transaction.update(
-              doc(db, "Queues", queueID, "Members", docSnap.id),
-              { Number: data.Number - 1 }
-            );
+              doc(db, "Queues", queueID, "Members", docSnap.id), updateData);
           }
         });
 
