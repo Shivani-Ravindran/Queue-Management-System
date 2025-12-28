@@ -7,105 +7,179 @@
 </head>
 <body>
   <div class="container">
-    <!-- HEADER -->
     <header>
         <h1 class="title">Queue Management</h1>
         <p class="subtitle">Create and manage queues efficiently</p>
     </header>
 
-      <button class="primary-btn">
-        +&nbsp;&nbsp;Create New Queue
-      </button>
+    <button class="primary-btn">
+      +&nbsp;&nbsp;Create New Queue
+    </button>
 
-    <!-- MAIN CONTENT -->
     <section>
       <!-- LEFT PANEL -->
       <div class="left-panel">
         <div class="panel-header">
-            <div class="icon-box">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-arrow-up">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
-                </svg>
-            </div>
-            <h2 class="active-queue">Active Queues</h2>
+          <div class="icon-box">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+              viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="icon-arrow-up">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
+            </svg>
+          </div>
+          <h2 class="active-queue">Active Queues</h2>
         </div>
 
-        <div class="empty-state">
+        <div class="empty-state" id="leftEmpty">
           <div class="empty-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-user">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+              viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="icon-user">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
             </svg>
           </div>
           <div class="empty-title">No queues created yet</div>
           <div class="empty-text">Click the button above to create one</div>
         </div>
+
+        <div id="queueList"></div>
       </div>
 
       <!-- RIGHT PANEL -->
-      <div class="right-panel">
+      <div class="right-panel" id="rightPanel">
         <div class="empty-state">
-        <div class="empty-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-user">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+          <div class="empty-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+              viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="icon-user">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
             </svg>
-        </div>
-        <h2 class="empty-title">Select a queue to manage</h2>
-        <p class="empty-text">Choose from the list on the left</p>
+          </div>
+          <h2 class="empty-title">Select a queue to manage</h2>
+          <p class="empty-text">Choose from the list on the left</p>
         </div>
       </div>
     </section>
   </div>
 
-  <!-- HELP BUTTON -->
-  <button class="help-btn">?</button>
-
-   <!-- CREATE QUEUE MODAL (static) -->
   <div class="overlay">
     <div class="pop-up">
       <h2 class="join-queue">Create new queue</h2>
       <p class="modal-subtitle">
         Enter the details of the new queue. All fields are required
       </p>
+
+
       <div class="input-box">
         <label class="label">Queue Name</label>
-        <input type="text" placeholder="Enter Queue ID (e.g., Q123456)" class="input" />
+        <input type="text" placeholder="Enter Queue name" class="input" />
         <label class="label2">A descriptive name for this queue</label>
       </div>
 
+
       <div class="input-box">
         <label class="label">Buffer Time (minutes)</label>
-        <input type="text" placeholder="Enter Queue ID (e.g., Q123456)" class="input" />
-        <label class="label2">Maximum time to wait for a customer before moving to the next</label>
+        <input type="text" placeholder="Enter the buffer time" class="input" />
+        <label class="label2">
+          Maximum time to wait for a customer before moving to the next
+        </label>
       </div>
 
       <div class="button">
-        <button class="closePopup join-btn">Close</button>
-        <button class="join-btn">Join Queue</button>
-      </div>
+        <button class="closePopup join-btnn">Close</button>
+        <button type="button" class="join-btnn" id="createQueueBtn">Create Queue</button>
 
+      </div>
     </div>
   </div>
 
-  <script>
-    const openBtn = document.querySelector(".primary-btn");
-    const closeBtn = document.querySelector(".closePopup");
-    const overlay = document.querySelector(".overlay");
+  <button class="help-btn">?</button>
+  <div class="overlay-help">
+      <div class="pop-up-help">
+        <p class="need-help">Need Help?</p>
+        <ul class="help-list">
+          <li>
+            <strong>What is an Active Queue?</strong>
+            <p>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An active queue is a queue that is currently running and accepting users.
+      You can select any active queue from the left panel to view or manage it.
+            </p>
+          </li>
+          <li>
+            <strong>What is a Queue ID and where is it used?</strong>
+            <p>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  A Queue ID is a unique, case-sensitive code generated when you create a queue.
+      Users must enter this ID exactly as shown to join the queue.
+            </p>
+          </li>
+          <li>
+            <strong>What does Buffer Time mean?</strong>
+            <p>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Buffer time is the maximum duration a user can remain at the front of the
+      queue before action is taken. If the user does not show up within this time, the person is moved to the last and
+      the queue automatically moves forward.
+            </p>
+          </li>
+          <li>
+            <strong>What does the Serve button do?</strong>
+            <p>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The Serve button moves the queue forward by marking the current user as
+      served and bringing the next user to the front of the queue.
+            </p>
+          </li>
+          <li>
+            <strong>What happens when I Pause a queue?</strong>
+            <p>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Pausing a queue prevents new users from joining it. Existing users remain
+      in the queue and can be served once the queue is resumed.
+            </p>
+          </li>
+          <li>
+            <strong>What does Stop Swap mean?</strong>
+            <p>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Stop Swap disables automatic position changes caused by buffer time expiry.
+      When enabled, users will not be swapped or moved automatically.
+            </p>
+          </li>
+          <li>
+            <strong>What happens if I Delete a queue?</strong>
+            <p>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Deleting a queue permanently removes it along with all users in it.
+      This action cannot be undone, so use it carefully.
+            </p>
+          </li>
+          <li>
+            <strong>What does “Serving” status indicate?</strong>
+            <p>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  The Serving label shows the user who is currently being attended.
+      Only one user can be in the serving state at a time.
+            </p>
+          </li>
+        </ul>
+        <button class="x-button">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="x-mark"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M6 18 18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+  
 
-    openBtn.addEventListener("click", () => {
-      overlay.classList.add("active");
-    });
-
-    closeBtn.addEventListener("click", () => {
-      overlay.classList.remove("active");
-    });
-
-    // Close when clicking outside popup
-    overlay.addEventListener("click", (e) => {
-      if (e.target === overlay) {
-        overlay.classList.remove("active");
-      }
-    });
-  </script>
-
+  <script type="module" src="script/firebase.js"></script>
+  <script type="module" src="script/adminscript.js"></script>
 </body>
 </html>

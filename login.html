@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal - Sign In</title>
+    <link rel="stylesheet" href="style/login.css">
+</head>
+<body>
+    <div class="login-card">
+        <div class="icon-container">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                <path d="M2 17l10 5 10-5"/>
+                <path d="M2 12l10 5 10-5"/>
+            </svg>
+        </div>
+
+        <h1>Admin Portal</h1>
+        <p class="welcome-text">Welcome back! Please sign in to continue</p>
+
+        <form id="loginForm">
+            <div class="input-group">
+                <label class="input-label">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    Admin Name
+                </label>
+                <input 
+                    type="text" 
+                    class="input-field" 
+                    placeholder="Enter your name"
+                    id="adminName"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="sign-in-btn">
+                <svg viewBox="0 0 24 24">
+                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                    <polyline points="10 17 15 12 10 7"/>
+                    <line x1="15" y1="12" x2="3" y2="12"/>
+                </svg>
+                Sign In
+            </button>
+        </form>
+    </div>
+<script type="module" src="script/login.js"></script>
+</body>
+</html>
