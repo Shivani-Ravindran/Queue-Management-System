@@ -182,6 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
           Number: data.Count,
           TokenNo: member.id,
           JoinedAt: serverTimestamp(),
+          ...(data.Count === 0 && { ServiceStartedAt: serverTimestamp() }),
         });
 
         transaction.update(queueRef, { Count: data.Count + 1 });
@@ -189,7 +190,6 @@ document.addEventListener("DOMContentLoaded", () => {
           memberId: member.id,
           Count: data.Count + 1,
           Buffer: data.Buffer,
-          // TurnStartedAt: data.Count === 0 ? serverTimestamp() : null,
           AvgWaitTime: data.AvgWaitTime,
           QueueName: data.QueueName,
         };
@@ -258,10 +258,14 @@ document.addEventListener("DOMContentLoaded", () => {
       avgWaitTime = queueSnap.data().AvgWaitTime || 0;
 
       if (lastMemberData) {
-        const WT =
-          lastMemberData.Number === 0
-            ? "Being served"
-            : avgWaitTime * lastMemberData.Number + " min";
+        let WT;
+        if (data.Number === 0) {
+          WT = "Being served";
+        } else if (avgWaitTime === 0) {
+          WT = "Estimating...";
+        } else {
+          WT = (avgWaitTime * data.Number).toFixed(1) + " min"; 
+        }
 
         const ewtEl = document.querySelector(".EWT");
         if (ewtEl) {
@@ -289,7 +293,14 @@ document.addEventListener("DOMContentLoaded", () => {
       lastMemberData = data;
       const status =
         data.Number > 0 ? "Waiting in queue" : "It's your turn now";
-      const WT = data.Number === 0 ? "Being served" : avgWaitTime * data.Number + " min";
+      let WT;
+      if (data.Number === 0) {
+        WT = "Being served";
+      } else if (avgWaitTime === 0) {
+        WT = "Estimating...";
+      } else {
+        WT = (avgWaitTime * data.Number).toFixed(1) + " min"; // 1 decimal place
+      }
       rightContainer.innerHTML = `
       <div class="queue-details">
           <p class="your-token-number">Your Token Number</p>
