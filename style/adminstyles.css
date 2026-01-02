@@ -596,3 +596,91 @@ section {
   font-weight: 600;
 }
 
+.serve-now-btn {
+  margin-left: 10px;
+  background: #ff4d4f;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius:6px;
+  cursor: pointer;
+}
+
+.serve-now-btn:hover {
+  background: #d9363e;
+}
+
+
+@media (max-width: 768px) {
+  .left-panel,
+  .right-panel {
+    height: auto;
+  }
+
+  section {
+    flex-direction: column;
+  }
+
+    .left-panel {
+    width: 100%;
+  }
+
+  .right-panel {
+    width: 100%;
+    padding: 3rem;
+  }
+
+  .primary-btn {
+    position: static;
+    width: 100%;
+    margin-bottom: 2rem;
+  }
+
+  .title {
+    font-size: 3rem;
+  }
+
+  .subtitle {
+    font-size: 1.6rem;
+  }
+
+    .controls {
+    flex-direction: column;
+  }
+
+  .join-btn {
+    width: 100%;
+    height: 60px;
+  }
+
+  .queue-user {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.2rem;
+  }
+
+  .queue-user > div:last-child {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .pop-up,
+  .pop-up-help {
+    width: 95%;
+    padding: 2rem;
+  }
+
+    #queueUsersPanel {
+    max-height: 270px; 
+    overflow-y: auto;
+    padding-right: 6px;
+  }
+
+    #queueList {
+    max-height: 180px;
+    overflow-y: auto;
+  }
+}
+
+
