@@ -10,20 +10,6 @@ html {
   font-size: 9px;
 }
 
-@media (min-width: 1300px) {
-  html {
-    /* font-size: 62.5%; */
-    font-size: 10px;
-  }
-}
-
-@media (min-width: 1500px) {
-  html {
-    /* font-size: 62.5%; */
-    font-size: 12px;
-  }
-}
-
 /* HERO SECTION */
 .section1 {
   background: linear-gradient(to bottom, #0a152e 0%, #bfcce8 100%);
@@ -48,8 +34,8 @@ html {
 }
 
 .description {
-  font-size: 2rem;
-  color: #272727;
+  font-size: 2.3rem;
+  color: #151515;
   line-height: 1.6;
   margin-bottom: 2.8rem;
 }
@@ -217,4 +203,134 @@ ul li::before {
   background: #fff;
   color: black;
   border: solid 0.1rem black;
+}
+
+/* Media queries */
+@media (min-width: 1300px) {
+  html {
+    font-size: 10px;
+  }
+}
+
+ @media (min-width: 1301px) and (max-width: 1333px)  {
+  html {
+    font-size: 10px;
+  }
+}
+
+
+@media (min-width: 1600px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media (min-width: 1500px) {
+  html {
+    font-size: 11px;
+  }
+}
+
+@media (min-width:1070px) and (max-width: 1210px) {
+  html {
+    font-size: 8px;
+  } 
+}
+
+@media (min-width:936px) and (max-width: 1069px) {
+  html {
+    font-size: 7px;
+  } 
+}
+
+@media (min-width:805px) and (max-width: 935px) {
+  html {
+    font-size: 6px;
+  } 
+}
+
+@media (min-width:671px) and (max-width: 804px) {
+  html {
+    font-size: 5px;
+  } 
+}
+
+@media (min-width:604px) and (max-width: 670px) {
+  html {
+    font-size: 4.5px;
+  } 
+}
+
+@media (min-width:537px) and (max-width: 603px) {
+  .section1{
+    height: 30vh;
+    padding: 10rem;
+    gap: 3rem;
+  }
+
+  .section2{
+    height:30vh;
+  }
+  
+  html {
+    font-size: 4px;
+  } 
+}
+
+@media (min-width:470px) and (max-width: 536px) {
+  .section1{
+    height: 50vh;
+  }
+
+  .section2{
+    height:50vh;
+  }
+  
+  html {
+    font-size: 3.5px;
+  } 
+}
+
+@media (min-width:404px) and (max-width: 469px) {
+  .section1{
+    height: 50vh;
+  }
+
+  .section2{
+    height:50vh;
+  }
+  
+
+  html {
+    font-size: 3px;
+  } 
+}
+
+@media (min-width:339px) and (max-width: 403px) {
+  .section1{
+    height: 50vh;
+  }
+
+  .section2{
+    height:50vh;
+  }
+  
+
+  html {
+    font-size: 2.5px;
+  } 
+}
+
+@media (min-width:0px) and (max-width: 338px) {
+  .section1{
+    height: 50vh;
+  }
+
+  .section2{
+    height:50vh;
+  }
+  
+  html {
+    font-size: 2px;
+  } 
 }

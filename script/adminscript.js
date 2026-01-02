@@ -1,9 +1,10 @@
 import QRCode from "https://esm.sh/qrcode@1.5.4";
-import { db } from "./firebase.js";
+import { onAuthStateChanged } from
+  "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+import { db, auth } from "./firebase.js";
 import {
   query,
   orderBy,
-  limit,
   where,
   collection,
   addDoc,
@@ -38,16 +39,19 @@ document.addEventListener("DOMContentLoaded", () => {
   let autoServeTimer = null;
   const queueBufferMap = {};
 
-const currentAdminUID = localStorage.getItem("adminUID");
+let currentAdminUID = null;
 
-if (!currentAdminUID) {
-  alert("Admin not logged in");
-  window.location.href = "login.html";
-  return;
-}
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    alert("Admin not logged in");
+    window.location.href = "login.html";
+    return;
+  }
 
+  currentAdminUID = user.uid;
+  loadQueues(); // move loadQueues here
+});
 
-  loadQueues();
   showRightEmpty();
 
   openBtn.onclick = () => overlay.classList.add("active");
@@ -410,6 +414,7 @@ panel.querySelectorAll(".serve-now-btn").forEach((btn) => {
       }
 
       isSwapEnabled = true;
+      localStorage.removeItem(`swap_${queueId}`);
       activeServingUserId = null;
 
       for (let i = 2; i < docs.length; i++) {
@@ -483,39 +488,36 @@ panel.querySelectorAll(".serve-now-btn").forEach((btn) => {
   }
 
   async function emergencyServeUser(queueId, userId) {
-  const membersRef = collection(db, "Queues", queueId, "Members");
-  const snap = await getDocs(query(membersRef, orderBy("Number", "asc")));
+    const membersRef = collection(db, "Queues", queueId, "Members");
+    const snap = await getDocs(query(membersRef, orderBy("Number", "asc")));
 
-  const docs = snap.docs;
-  const targetIndex = docs.findIndex((d) => d.id === userId);
+    const docs = snap.docs;
+    const targetIndex = docs.findIndex((d) => d.id === userId);
 
-  if (targetIndex === -1) return;
+    if (targetIndex === -1) return;
 
-  clearAutoServeTimer();
-  isSwapEnabled = false;
-  activeServingUserId = userId;
+    clearAutoServeTimer();
+    isSwapEnabled = false;
+    localStorage.setItem(`swap_${queueId}`, "false");
+    activeServingUserId = userId;
 
-  await runTransaction(db, async (transaction) => {
-    if (docs[0]) {
-      transaction.update(docs[0].ref, {
-        ServiceStartedAt: null,
+    await runTransaction(db, async (transaction) => {
+
+      transaction.update(docs[targetIndex].ref, {
+        Number: 0,
+        ServiceStartedAt: serverTimestamp(),
       });
-    }
-    transaction.update(docs[targetIndex].ref, {
-      Number: 0,
-      ServiceStartedAt: serverTimestamp(),
-    });
 
-    let newIndex = 1;
+      let newNumber = 1;
 
-    for (let i = 0; i < docs.length; i++) {
-      if (i !== targetIndex) {
+      for (let i = 0; i < docs.length; i++) {
+        if (i === targetIndex) continue;
+
         transaction.update(docs[i].ref, {
-          Number: newIndex++,
+          Number: newNumber++,
+          ServiceStartedAt: null,
         });
       }
-    }
-  });
-}
-
+    });
+  }
 });

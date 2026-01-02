@@ -1,4 +1,8 @@
 import { db } from "./firebase.js";
+import { auth } from "./firebase.js";
+import { setPersistence, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+import { signInAnonymously } from
+  "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 import {
   collection,
   doc,
@@ -14,7 +18,7 @@ import {
 let qrScanner;
 let isScanning = false;
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   //JOIN OVERLAY
   const openBtn = document.querySelector(".primary-btn");
   const overlay = document.querySelector(".overlay");
@@ -30,7 +34,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       joinContent.style.display = "block";
       qrScannerDiv.style.display = "none";
-      overlay.classList.remove("active");
     }
   });
 
@@ -168,6 +171,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
+      let user;
+      try {
+        user = await initAuth();
+      } 
+      catch (err) {
+        console.error("Error joining queue:", err);
+        return;
+      }
       const result = await runTransaction(db, async (transaction) => {
         const queueSnap = await transaction.get(queueRef);
         if (!queueSnap.exists()) throw new Error("Queue does not exist");
@@ -180,6 +191,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         transaction.set(member, {
           Number: data.Count,
+          UID: user.uid,
           TokenNo: member.id,
           JoinedAt: serverTimestamp(),
           ...(data.Count === 0 && { ServiceStartedAt: serverTimestamp() }),
@@ -209,6 +221,32 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     displayQueues();
     renderDetails(queueID);
+  }
+  async function initAuth() {
+    try {
+      await setPersistence(auth, browserLocalPersistence);
+    } catch (e) {
+      console.warn("Local persistence failed, falling back to session:", e);
+      await setPersistence(auth, browserSessionPersistence);
+    }
+
+    let user = auth.currentUser;
+    if (!user) {
+      const userCredential = await signInAnonymously(auth);
+      user = userCredential.user;
+    }
+
+    // Wait until user.uid is available
+    let attempts = 0;
+    while (!user?.uid && attempts < 10) {
+      await new Promise(res => setTimeout(res, 100));
+      user = auth.currentUser;
+      attempts++;
+    }
+
+    if (!user?.uid) throw new Error("Failed to sign in anonymously");
+    console.log("Authenticated user UID:", user.uid);
+    return user;
   }
 
 
