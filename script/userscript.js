@@ -258,10 +258,14 @@ document.addEventListener("DOMContentLoaded", () => {
       avgWaitTime = queueSnap.data().AvgWaitTime || 0;
 
       if (lastMemberData) {
-        const WT =
-          lastMemberData.Number === 0
-            ? "Being served"
-            : (avgWaitTime * lastMemberData.Number).toFixed(1) + " min";
+        let WT;
+        if (data.Number === 0) {
+          WT = "Being served";
+        } else if (avgWaitTime === 0) {
+          WT = "Estimating...";
+        } else {
+          WT = (avgWaitTime * data.Number).toFixed(1) + " min"; 
+        }
 
         const ewtEl = document.querySelector(".EWT");
         if (ewtEl) {
