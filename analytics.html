@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Queue Analytics</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <script src="https://www.gstatic.com/charts/loader.js"></script>
+
+  <script type="module" src="script/analytics.js"></script>
+
+  <style>
+    body {
+      font-family: system-ui;
+      background: #f4f6fb;
+      padding: 2rem;
+    }
+    .chart {
+      background: white;
+      padding: 1rem;
+      margin-bottom: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 10px 20px rgba(0,0,0,.08);
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Queue Analytics Dashboard</h1>
+
+  <div id="avgWaitChart" class="chart" style="height:400px"></div>
+  <div id="servedCountChart" class="chart" style="height:400px"></div>
+  <div id="statusChart" class="chart" style="height:400px"></div>
+</body>
+</html>

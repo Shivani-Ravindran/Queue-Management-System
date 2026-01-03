@@ -1,8 +1,7 @@
-// script/firebase.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
-// Your Firebase config
+import { getAuth } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyCK783Fd-EV7HT_60Z2e4srnSJwSvaTj4s",
   authDomain: "queue-management-3d9cd.firebaseapp.com",
@@ -12,8 +11,7 @@ const firebaseConfig = {
   appId: "1:194012295754:web:b11719c702f4aa95746cb3"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-// Initialize Firestore
-export const db = getFirestore(app);
+const db = getFirestore(app);
+const auth = getAuth(app);
+export { db, auth };

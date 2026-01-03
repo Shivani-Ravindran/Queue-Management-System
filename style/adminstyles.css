@@ -1,3 +1,5 @@
+adminstyle.css
+
 * {
   margin: 0;
   padding: 0;
@@ -683,4 +685,26 @@ section {
   }
 }
 
+.analytics-top-btn {
+  margin-left: 0.7rem;
+  margin-bottom: 4rem;
+  background-color:#0a152e;
+  color: white;
+  border-radius: 10px;
+  padding: 0.9rem 1.4rem;
+  border: none;
+  cursor: pointer;
+  
+}
 
+.analytics-top-btn svg {
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+}
+
+.empty-icon svg {
+  width: 48px;
+  height: 48px;
+  color: #cbd6e5f5; 
+}

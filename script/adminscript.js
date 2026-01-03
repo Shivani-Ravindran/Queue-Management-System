@@ -49,7 +49,15 @@ onAuthStateChanged(auth, (user) => {
   }
 
   currentAdminUID = user.uid;
-  loadQueues(); // move loadQueues here
+  const analyticsBtn = document.querySelector(".analytics-top-btn");
+
+if (analyticsBtn) {
+  analyticsBtn.onclick = () => {
+    window.location.href = `analytics.html?adminUID=${currentAdminUID}`;
+  };
+}
+
+  loadQueues(); 
 });
 
   showRightEmpty();
@@ -74,14 +82,19 @@ onAuthStateChanged(auth, (user) => {
     }
 
     const AdminUID = currentAdminUID;
+    const today = new Date().toISOString().slice(0, 10);
+
     const docRef = await addDoc(collection(db, "Queues"), {
       AdminUID,
       QueueName,
       Buffer,
-      AvgWaitTime : 0,
+      AvgWaitTime: 0,
       Count: 0,
+      ServedToday: 0,
+      LastResetDate: today,
       Status: "Active",
     });
+
 
     const queueId = docRef.id;
 
@@ -226,6 +239,7 @@ const q = query(
       clearAutoServeTimer();
       alert("You have stopped swap");
     };
+
 
     loadQueueMembers(queue.Id);
   }
@@ -400,9 +414,10 @@ panel.querySelectorAll(".serve-now-btn").forEach((btn) => {
       }
 
       transaction.update(queueRef, {
-        AvgWaitTime: newAvg,
-        Count: Math.max(count - 1, 0),
-      });
+      AvgWaitTime: newAvg,
+      Count: Math.max(count - 1, 0),
+      ServedToday: (queueData.ServedToday || 0) + 1,
+    });
       
       transaction.delete(docs[0].ref);
 
@@ -478,14 +493,42 @@ panel.querySelectorAll(".serve-now-btn").forEach((btn) => {
 
   //  end
   function showRightEmpty() {
-    rightPanel.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-icon">👤</div>
-        <h2 class="empty-title">Select a queue to manage</h2>
-        <p class="empty-text">Choose from the list on the left</p>
+  rightPanel.innerHTML = `
+    <div class="empty-state">
+      <div class="empty-icon">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             fill="none"
+             viewBox="0 0 24 24"
+             stroke-width="1.5"
+             stroke="currentColor"
+             class="size-6">
+          <path stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M15 19.128a9.38 9.38 0 0 0 2.625.372
+                   9.337 9.337 0 0 0 4.121-.952
+                   4.125 4.125 0 0 0-7.533-2.493
+                   M15 19.128v-.003
+                   c0-1.113-.285-2.16-.786-3.07
+                   M15 19.128v.106
+                   A12.318 12.318 0 0 1 8.624 21
+                   c-2.331 0-4.512-.645-6.374-1.766
+                   l-.001-.109
+                   a6.375 6.375 0 0 1 11.964-3.07
+                   M12 6.375
+                   a3.375 3.375 0 1 1-6.75 0
+                   3.375 3.375 0 0 1 6.75 0
+                   Z
+                   m8.25 2.25
+                   a2.625 2.625 0 1 1-5.25 0
+                   2.625 2.625 0 0 1 5.25 0Z"/>
+        </svg>
       </div>
-    `;
-  }
+      <h2 class="empty-title">Select a queue to manage</h2>
+      <p class="empty-text">Choose from the list on the left</p>
+    </div>
+  `;
+}
+
 
   async function emergencyServeUser(queueId, userId) {
     const membersRef = collection(db, "Queues", queueId, "Members");
