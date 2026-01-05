@@ -28,6 +28,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const queueNameInput = document.querySelectorAll(".input")[0];
   const bufferTimeInput = document.querySelectorAll(".input")[1];
+  const latInput = document.querySelectorAll(".input")[2];
+  const lngInput = document.querySelectorAll(".input")[3];
+
 
   const queueList = document.querySelector("#queueList");
   const leftEmptyState = document.querySelector("#leftEmpty");
@@ -70,7 +73,9 @@ if (analyticsBtn) {
     overlay.classList.remove("active");
     queueNameInput.value = "";
     bufferTimeInput.value = "";
-  }
+    latInput.value = "";
+    lngInput.value = "";
+}
 
   document.querySelectorAll(".input").forEach(input => {
     input.addEventListener("keydown", (e) => {
@@ -84,25 +89,31 @@ if (analyticsBtn) {
   createBtn.onclick = async () => {
     const QueueName = queueNameInput.value.trim();
     const Buffer = Number(bufferTimeInput.value.trim());
+    const lat = Number(latInput.value.trim());
+const lng = Number(lngInput.value.trim());
 
-    if (!QueueName || !Buffer) {
-      alert("Fill all fields");
-      return;
-    }
+if (!QueueName || !Buffer || isNaN(lat) || isNaN(lng)) {
+  alert("Please fill all fields including latitude and longitude");
+  return;
+}
 
     const AdminUID = currentAdminUID;
     const today = new Date().toISOString().slice(0, 10);
 
     const docRef = await addDoc(collection(db, "Queues"), {
-      AdminUID,
-      QueueName,
-      Buffer,
-      AvgWaitTime: 0,
-      Count: 0,
-      ServedToday: 0,
-      LastResetDate: today,
-      Status: "Active",
-    });
+    AdminUID,
+    QueueName,
+    Buffer,
+    lat,
+    lng,
+    AvgWaitTime: 0,
+    Count: 0,
+    ServedToday: 0,
+    LastResetDate: today,
+    Status: "Active",
+  });
+
+
 
 
     const queueId = docRef.id;

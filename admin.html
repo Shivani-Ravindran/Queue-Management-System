@@ -101,6 +101,25 @@
         <label class="label2">
           Maximum time to wait for a customer before moving to the next
         </label>
+        <label class="label">Latitude</label>
+        <input
+          type="number"
+          step="any"
+          placeholder="e.g. 13.08268"
+          class="input"
+        />
+        <label class="label2">Latitude of the queue location</label>
+      </div>
+
+      <div class="input-box">
+        <label class="label">Longitude</label>
+        <input
+          type="number"
+          step="any"
+          placeholder="e.g. 80.270718"
+          class="input"
+        />
+        <label class="label2">Longitude of the queue location</label>
       </div>
 
       <div class="button">
@@ -160,5 +179,7 @@
 
   <script type="module" src="script/firebase.js"></script>
   <script type="module" src="script/adminscript.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY"></script>
+
 </body>
 </html>

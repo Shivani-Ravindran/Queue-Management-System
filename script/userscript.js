@@ -15,6 +15,12 @@ import {
   onSnapshot,
 } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
+const directionsBtn = document.getElementById("directionsBtn");
+
+let map;
+let marker;
+let queueLat = null;
+let queueLng = null;
 let qrScanner;
 let isScanning = false;
 
@@ -315,6 +321,31 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
+function loadMap(lat, lng) {
+  if (!lat || !lng) return;
+
+  queueLat = lat;
+  queueLng = lng;
+
+  const location = { lat, lng };
+
+  if (!map) {
+    map = new google.maps.Map(document.getElementById("map"), {
+      zoom: 15,
+      center: location,
+    });
+  } else {
+    map.setCenter(location);
+  }
+
+  if (marker) marker.setMap(null);
+
+  marker = new google.maps.Marker({
+    position: location,
+    map: map,
+    title: "Queue Location",
+  });
+}
 
 
   //RENDER DETAILS ON RIGHT PANEL FUNCTION
@@ -329,6 +360,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!queue) return;
 
     const queueRef = doc(db, "Queues", queueID);
+    getDoc(queueRef).then((snap) => {
+  if (snap.exists()) {
+    const data = snap.data();
+
+    if (data.lat && data.lng) {
+      loadMap(data.lat, data.lng);
+      directionsBtn.style.display = "block"; 
+    } else {
+      directionsBtn.style.display = "none";
+    }
+  }
+});
+
+
     let avgWaitTime = 0;
     let lastMemberData = null;
 
@@ -486,6 +531,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       delete joinedQueues[queueID];
       localStorage.setItem("joinedQueues", JSON.stringify(joinedQueues));
       displayQueues();
+      directionsBtn.style.display = "none";
 
       rightContainer.innerHTML = `
       <div class="empty-state">
@@ -518,6 +564,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   //EMPTY STATE FUNCTIONS
+  directionsBtn.style.display = "none";
   function renderRightEmptyState() {
     rightContainer.innerHTML = `
       <div class="empty-state">
@@ -563,4 +610,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       <div class="empty-title">No queues joined yet</div>
       <div class="empty-text">Click the button above to join one</div>`;
   }
+
+  document.getElementById("directionsBtn").onclick = () => {
+  if (!queueLat || !queueLng) {
+    alert("Location not available");
+    return;
+  }
+  const url = `https://www.google.com/maps/dir/?api=1&destination=${queueLat},${queueLng}`;
+  window.open(url, "_blank");
+};
+
 });
