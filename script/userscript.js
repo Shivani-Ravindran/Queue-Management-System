@@ -1,8 +1,11 @@
 import { db } from "./firebase.js";
 import { auth } from "./firebase.js";
-import { setPersistence, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-import { signInAnonymously } from
-  "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+import {
+  setPersistence,
+  browserLocalPersistence,
+  browserSessionPersistence,
+} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+import { signInAnonymously } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 import {
   collection,
   doc,
@@ -54,8 +57,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     e.stopPropagation();
   });
 
-
-  
   //QR button
   async function stopScannerIfRunning() {
     if (isScanning) {
@@ -107,8 +108,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     );
   });
 
-
-
   //HELP OVERLAY
   const openHelpBtn = document.querySelector(".help-btn");
   const helpOverlay = document.querySelector(".overlay-help");
@@ -149,7 +148,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         body: JSON.stringify({
           message: userText,
           source: "queue_help",
-          chat_type: "user"
+          chat_type: "user",
         }),
       });
 
@@ -171,8 +170,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     chatMessages.scrollTop = chatMessages.scrollHeight;
     return msg;
   }
-
-
 
   //JS
   document.querySelector(".join-btn").addEventListener("click", () => {
@@ -207,8 +204,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   let joinedQueues = JSON.parse(localStorage.getItem("joinedQueues")) || {};
   displayQueues();
 
-
-
   //JOIN QUEUE FUNCTION
   async function joinQueue() {
     const queueID = document.querySelector(".input").value;
@@ -226,8 +221,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       let user;
       try {
         user = await initAuth();
-      } 
-      catch (err) {
+      } catch (err) {
         console.error("Error joining queue:", err);
         return;
       }
@@ -291,7 +285,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Wait until user.uid is available
     let attempts = 0;
     while (!user?.uid && attempts < 10) {
-      await new Promise(res => setTimeout(res, 100));
+      await new Promise((res) => setTimeout(res, 100));
       user = auth.currentUser;
       attempts++;
     }
@@ -300,8 +294,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.log("Authenticated user UID:", user.uid);
     return user;
   }
-
-
 
   //DISPLAY QUEUE ON LEFT PANEL FUNCTION
   function displayQueues() {
@@ -321,32 +313,31 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-function loadMap(lat, lng) {
-  if (!lat || !lng) return;
+  function loadMap(lat, lng) {
+    if (!lat || !lng) return;
 
-  queueLat = lat;
-  queueLng = lng;
+    queueLat = lat;
+    queueLng = lng;
 
-  const location = { lat, lng };
+    const location = { lat, lng };
 
-  if (!map) {
-    map = new google.maps.Map(document.getElementById("map"), {
-      zoom: 15,
-      center: location,
+    if (!map) {
+      map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 15,
+        center: location,
+      });
+    } else {
+      map.setCenter(location);
+    }
+
+    if (marker) marker.setMap(null);
+
+    marker = new google.maps.Marker({
+      position: location,
+      map: map,
+      title: "Queue Location",
     });
-  } else {
-    map.setCenter(location);
   }
-
-  if (marker) marker.setMap(null);
-
-  marker = new google.maps.Marker({
-    position: location,
-    map: map,
-    title: "Queue Location",
-  });
-}
-
 
   //RENDER DETAILS ON RIGHT PANEL FUNCTION
   let unsubscribeMemberListener = null;
@@ -361,18 +352,17 @@ function loadMap(lat, lng) {
 
     const queueRef = doc(db, "Queues", queueID);
     getDoc(queueRef).then((snap) => {
-  if (snap.exists()) {
-    const data = snap.data();
+      if (snap.exists()) {
+        const data = snap.data();
 
-    if (data.lat && data.lng) {
-      loadMap(data.lat, data.lng);
-      directionsBtn.style.display = "block"; 
-    } else {
-      directionsBtn.style.display = "none";
-    }
-  }
-});
-
+        if (data.lat && data.lng) {
+          loadMap(data.lat, data.lng);
+          directionsBtn.style.display = "block";
+        } else {
+          directionsBtn.style.display = "none";
+        }
+      }
+    });
 
     let avgWaitTime = 0;
     let lastMemberData = null;
@@ -393,7 +383,7 @@ function loadMap(lat, lng) {
         } else if (avgWaitTime === 0) {
           WT = "Estimating...";
         } else {
-          WT = (avgWaitTime * data.Number).toFixed(1) + " min"; 
+          WT = (avgWaitTime * data.Number).toFixed(1) + " min";
         }
 
         const ewtEl = document.querySelector(".EWT");
@@ -402,7 +392,7 @@ function loadMap(lat, lng) {
         }
       }
     });
-    
+
     const memberRef = doc(db, "Queues", queueID, "Members", queue.TokenNumber);
     let hasExited = false;
     let alertShown = false;
@@ -468,8 +458,6 @@ function loadMap(lat, lng) {
     });
   }
 
-
-
   //LEAVE QUEUE FUNCTION
   async function leaveQueue(queueID, memberID) {
     const queueRef = doc(db, "Queues", queueID);
@@ -518,7 +506,9 @@ function loadMap(lat, lng) {
             }
 
             transaction.update(
-              doc(db, "Queues", queueID, "Members", docSnap.id), updateData);
+              doc(db, "Queues", queueID, "Members", docSnap.id),
+              updateData
+            );
           }
         });
 
@@ -612,12 +602,11 @@ function loadMap(lat, lng) {
   }
 
   document.getElementById("directionsBtn").onclick = () => {
-  if (!queueLat || !queueLng) {
-    alert("Location not available");
-    return;
-  }
-  const url = `https://www.google.com/maps/dir/?api=1&destination=${queueLat},${queueLng}`;
-  window.open(url, "_blank");
-};
-
+    if (!queueLat || !queueLng) {
+      alert("Location not available");
+      return;
+    }
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${queueLat},${queueLng}`;
+    window.open(url, "_blank");
+  };
 });
