@@ -1,5 +1,6 @@
 # macOS junk files
 .DS_Store
+.vscode/
 
 # Node / JS dependencies
 node_modules/
@@ -9,3 +10,12 @@ node_modules/
 
 # OS temp files
 *.tmp
+
+# Python
+.venv/
+*.pyc
+__pycache__/
+
+# Environment variables
+backend/.env
+

@@ -1,34 +1,126 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Queue Analytics</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <title>Queue Analytics</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
 
-  <script type="module" src="script/analytics.js"></script>
+    <script type="module" src="script/analytics.js"></script>
 
-  <style>
-    body {
-      font-family: system-ui;
-      background: #f4f6fb;
-      padding: 2rem;
-    }
-    .chart {
-      background: white;
-      padding: 1rem;
-      margin-bottom: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 10px 20px rgba(0,0,0,.08);
-    }
-  </style>
-</head>
+    <style>
+      html {
+        font-size: 9px;
+      }
 
-<body>
-  <h1>Queue Analytics Dashboard</h1>
+      body {
+        font-family: system-ui;
+        background: #f4f6fb;
+        padding: 2rem;
+      }
 
-  <div id="avgWaitChart" class="chart" style="height:400px"></div>
-  <div id="servedCountChart" class="chart" style="height:400px"></div>
-  <div id="statusChart" class="chart" style="height:400px"></div>
-</body>
+      .chart {
+        background: white;
+        padding: 1rem;
+        margin-bottom: 2rem;
+        border-radius: 1.2rem;
+        box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.08);
+        height: 40rem;
+      }
+      h2 {
+        text-align: center;
+        color: #3f3f3f;
+        margin-top: 3rem;
+      }
+      .x-button {
+        width: 2rem;
+        height: auto;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        margin-bottom: 1rem;
+      }
+
+      .x-mark {
+        width: 2rem;
+        height: auto;
+        color: black;
+      }
+
+      @media (min-width: 1300px) {
+        html {
+          font-size: 10px;
+        }
+      }
+
+      @media (min-width: 1500px) {
+        html {
+          font-size: 12px;
+        }
+      }
+
+      @media (min-width: 597px) and (max-width: 635px) {
+        html {
+          font-size: 8px;
+        }
+      }
+
+      @media (min-width: 550px) and (max-width: 596px) {
+        html {
+          font-size: 6.5px;
+        }
+      }
+
+      @media (min-width: 513px) and (max-width: 549px) {
+        html {
+          font-size: 5px;
+        }
+      }
+
+      @media (min-width: 496px) and (max-width: 512px) {
+        html {
+          font-size: 4.5px;
+        }
+
+        .chart {
+          height: 3rem;
+        }
+      }
+
+      @media (min-width: 0px) and (max-width: 495px) {
+        html {
+          font-size: 4px;
+        }
+
+        .chart {
+          height: 2.5rem;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <a class="x-button" href="admin.html">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="x-mark"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M6 18 18 6M6 6l12 12"
+        />
+      </svg>
+    </a>
+    <h1>Queue Analytics Dashboard</h1>
+    <h2>Create Queues To View Analytics</h2>
+
+    <div id="avgWaitChart" class="chart" style="height: 40rem"></div>
+    <div id="servedCountChart" class="chart" style="height: 40rem"></div>
+    <div id="statusChart" class="chart" style="height: 40rem"></div>
+  </body>
 </html>

@@ -9,6 +9,7 @@ import {
 
 google.charts.load("current", { packages: ["corechart"] });
 google.charts.setOnLoadCallback(loadAnalytics);
+let cachedQueues = [];
 
 function getAdminUID() {
   const params = new URLSearchParams(window.location.search);
@@ -43,22 +44,30 @@ async function loadAnalytics() {
 
   const queues = [];
 
-for (const docSnap of snapshot.docs) {
-  const data = docSnap.data();
-  const served = await resetIfNewDay(docSnap.ref, data);
+  for (const docSnap of snapshot.docs) {
+    const data = docSnap.data();
+    const served = await resetIfNewDay(docSnap.ref, data);
 
-  queues.push({
-    name: data.QueueName,
-    avg: data.AvgWaitTime || 0,
-    count: served,
-    status: data.Status
-  });
-}
+    queues.push({
+      name: data.QueueName,
+      avg: data.AvgWaitTime || 0,
+      count: served,
+      status: data.Status
+    });
+  }
+  cachedQueues = queues
 
-
-  drawAvgWaitChart(queues);
-  drawServedCountChart(queues);
-  drawStatusChart(queues);
+  if (queues.length !== 0){
+    document.querySelector("h2").style.display="none";
+    drawAvgWaitChart(queues);
+    drawServedCountChart(queues);
+    drawStatusChart(queues);
+  }
+  else{
+    document.querySelectorAll(".chart").forEach(chart => {
+      chart.style.display = "none";
+    });
+  }
 }
 
 /* -------- Charts -------- */
@@ -73,12 +82,13 @@ new google.visualization.BarChart(
   document.getElementById("avgWaitChart")
 ).draw(data, {
   title: "Average Wait Time per Queue",
-  colors: ["#673147"] 
+  colors: ["#673147"] ,
+  legend: { position: "bottom" }
 });
 
 }
 
-function drawServedCountChart(queues) {
+function drawServedCountChart(queues) {  
   const data = google.visualization.arrayToDataTable([
     ["Queue", "Users Served"],
     ...queues.map(q => [q.name, q.count])
@@ -88,7 +98,8 @@ new google.visualization.ColumnChart(
   document.getElementById("servedCountChart")
 ).draw(data, {
   title: "Users Served per Queue",
-  colors: ["#43a047"] 
+  colors: ["#43a047"] ,
+  legend: { position: "bottom" }
 });
 
 }
@@ -127,7 +138,7 @@ function drawStatusChart(queues) {
   const options = {
     title: "Queue Status Distribution",
     tooltip: { isHtml: false },
-    legend: { position: "right" }
+    legend: { position: "bottom" }
   };
 
   const chart = new google.visualization.PieChart(
@@ -136,3 +147,11 @@ function drawStatusChart(queues) {
 
   chart.draw(data, options);
 }
+
+window.addEventListener("resize", () => {
+  if (cachedQueues.length !== 0) {
+    drawAvgWaitChart(cachedQueues);
+    drawServedCountChart(cachedQueues);
+    drawStatusChart(cachedQueues);
+  }
+});

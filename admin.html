@@ -114,66 +114,30 @@
   <button class="help-btn">?</button>
   <div class="overlay-help">
       <div class="pop-up-help">
-        <p class="need-help">Need Help?</p>
-        <ul class="help-list">
-          <li>
-            <strong>What is an Active Queue?</strong>
-            <p>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An active queue is a queue that is currently running and accepting users.
-      You can select any active queue from the left panel to view or manage it.
-            </p>
-          </li>
-          <li>
-            <strong>What is a Queue ID and where is it used?</strong>
-            <p>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  A Queue ID is a unique, case-sensitive code generated when you create a queue.
-      Users must enter this ID exactly as shown to join the queue.
-            </p>
-          </li>
-          <li>
-            <strong>What does Buffer Time mean?</strong>
-            <p>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Buffer time is the maximum duration a user can remain at the front of the
-      queue before action is taken. If the user does not show up within this time, the person is moved to the last and
-      the queue automatically moves forward.
-            </p>
-          </li>
-          <li>
-            <strong>What does the Serve button do?</strong>
-            <p>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The Serve button moves the queue forward by marking the current user as
-      served and bringing the next user to the front of the queue.
-            </p>
-          </li>
-          <li>
-            <strong>What happens when I Pause a queue?</strong>
-            <p>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Pausing a queue prevents new users from joining it. Existing users remain
-      in the queue and can be served once the queue is resumed.
-            </p>
-          </li>
-          <li>
-            <strong>What does Stop Swap mean?</strong>
-            <p>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Stop Swap disables automatic position changes caused by buffer time expiry.
-      When enabled, users will not be swapped or moved automatically.
-            </p>
-          </li>
-          <li>
-            <strong>What happens if I Delete a queue?</strong>
-            <p>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Deleting a queue permanently removes it along with all users in it.
-      This action cannot be undone, so use it carefully.
-            </p>
-          </li>
-          <li>
-            <strong>What does “Serving” status indicate?</strong>
-            <p>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  The Serving label shows the user who is currently being attended.
-      Only one user can be in the serving state at a time.
-            </p>
-          </li>
-        </ul>
+        <p class="need-help">Need Help? Ask our chatbot!</p>
+        <div class="chat-messages"></div>
+        <div class="flex-help">
+          <input
+            class="input help-input"
+            placeholder="Type your question"
+            type="text"
+          />
+          <button class="send">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="send-icon"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25"
+              />
+            </svg>
+          </button>
         <button class="x-button">
           <svg
             xmlns="http://www.w3.org/2000/svg"

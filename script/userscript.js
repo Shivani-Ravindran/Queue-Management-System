@@ -120,6 +120,52 @@ document.addEventListener("DOMContentLoaded", async () => {
     e.stopPropagation();
   });
 
+  document.querySelector(".help-input").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      document.querySelector(".send").click();
+    }
+  });
+
+  document.querySelector(".send").addEventListener("click", async () => {
+    const inputEl = document.querySelector(".help-input");
+    const userText = inputEl.value.trim();
+    if (!userText) return;
+
+    addMessage(userText, "user-msg");
+    inputEl.value = ""; // clear input UI
+
+    const typingMsg = addMessage("Bot is typing...", "bot-msg");
+
+    try {
+      const response = await fetch("http://127.0.0.1:5000/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: userText,
+          source: "queue_help",
+          chat_type: "user"
+        }),
+      });
+
+      const data = await response.json();
+      typingMsg.textContent = data.reply;
+    } catch (error) {
+      typingMsg.textContent = "Sorry, something went wrong 😕";
+      console.error(error);
+    }
+  });
+
+  function addMessage(text, sender) {
+    const msg = document.createElement("div");
+    msg.classList.add(sender); // "user-msg" or "bot-msg"
+    msg.textContent = text;
+
+    const chatMessages = document.querySelector(".chat-messages");
+    chatMessages.appendChild(msg);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    return msg;
+  }
+
 
 
   //JS
