@@ -528,7 +528,7 @@ panel.querySelectorAll(".serve-now-btn").forEach((btn) => {
     const typingMsg = addMessage("Bot is typing...", "bot-msg");
 
     try {
-      const response = await fetch("/api/chat", {
+      const response = await fetch("/api", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

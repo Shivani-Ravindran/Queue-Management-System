@@ -12,7 +12,7 @@ client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 app = Flask(__name__)
 CORS(app)
 
-@app.route("/chat", methods=["POST"])
+@app.route("/", methods=["POST"])
 def chat():
     try:
         data = request.get_json()
