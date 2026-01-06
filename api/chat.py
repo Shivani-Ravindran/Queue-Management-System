@@ -72,7 +72,7 @@ def chat():
         prompt = ADMIN_PROMPT if chat_type == "admin" else USER_PROMPT
 
         response = client.models.generate_content(
-            model="models/gemini-2.5-flash",
+            model="gemini-2.5-flash",
             contents=[
                 {
                     "role": "user",
