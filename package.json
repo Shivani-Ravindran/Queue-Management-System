@@ -1,5 +1,29 @@
 {
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
     "firebase": "^12.7.0"
-  }
+  },
+  "name": "queue-managemen-system",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Physical queues in places such as clinics, college offices, food counters, and help desks often lead to overcrowding, long waiting times, and inefficiency. Managing unpredictable service times makes the experience uncomfortable for both users and administrators.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shivani-Ravindran/Queue-Managemen-System.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Shivani-Ravindran/Queue-Managemen-System/issues"
+  },
+  "homepage": "https://github.com/Shivani-Ravindran/Queue-Managemen-System#readme"
 }
