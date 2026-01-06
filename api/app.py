@@ -91,5 +91,4 @@ def chat():
         return jsonify({"error": "Something went wrong."}), 500
 
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+

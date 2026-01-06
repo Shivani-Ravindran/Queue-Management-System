@@ -464,10 +464,10 @@ section {
   background-color: rgb(238, 224, 97);
 }
 
-.help-btn {
-  position: absolute;
-  transform: translate(0,50%);
-  right:0.5rem;
+body .help-btn {
+  position: fixed;
+  bottom: 4rem;
+  right:4rem;
   width: 5.6rem;
   height: 5.6rem;
   border-radius: 50%;
@@ -528,6 +528,9 @@ section {
 }
 
 .help-input{
+  width:100%;
+  padding: 1rem 0 1rem 1rem;
+  border-radius: 1rem;
   width: 0rem;
   flex: 1;
   display: inline;
