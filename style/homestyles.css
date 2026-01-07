@@ -271,7 +271,6 @@ ul li::before {
   .section2{
     height:30vh;
   }
-  
   html {
     font-size: 4px;
   } 
@@ -280,57 +279,132 @@ ul li::before {
 @media (min-width:470px) and (max-width: 536px) {
   .section1{
     height: 50vh;
+    padding: 10rem;
+    gap: 3rem;
   }
 
   .section2{
     height:50vh;
   }
-  
+
   html {
     font-size: 3.5px;
   } 
 }
 
-@media (min-width:404px) and (max-width: 469px) {
+@media (min-width:457px) and (max-width: 469px) {
   .section1{
     height: 50vh;
+    padding: 10rem;
+    gap: 3rem;
   }
 
   .section2{
     height:50vh;
   }
-  
+
+  html {
+    font-size: 3.5px;
+  } 
+}
+
+@media (min-width:440px) and (max-width: 456px) {
+  .section1{
+    height: 50vh;
+    padding: 10rem;
+    gap: 3rem;
+  }
+
+  .section2{
+    height:50vh;
+  }
+
+  html {
+    font-size: 3.4px;
+  } 
+}
+
+@media (min-width:414px) and (max-width: 439px) {
+  .section1{
+    height: 50vh;
+    padding: 10rem;
+    gap: 3rem;
+  }
+
+  .section2{
+    height:50vh;
+  }
+
+  html {
+    font-size: 3.2px;
+  } 
+}
+
+@media (min-width:389px) and (max-width: 413px) {
+  .section1{
+    height: 50vh;
+    padding: 10rem;
+    gap: 3rem;
+  }
+
+  .section2{
+    height:50vh;
+  }
 
   html {
     font-size: 3px;
   } 
 }
 
-@media (min-width:339px) and (max-width: 403px) {
+@media (min-width:380px) and (max-width: 388px) {
   .section1{
     height: 50vh;
+    padding: 10rem;
+    gap: 3rem;
   }
 
   .section2{
     height:50vh;
   }
-  
 
+  html {
+    font-size: 2.9px;
+  } 
+}
+
+@media (min-width:364px) and (max-width: 379px) {
+  html {
+    font-size: 2.8px;
+  } 
+}
+
+@media (min-width:352px) and (max-width: 379px) {
+  html {
+    font-size: 2.7px;
+  } 
+}
+
+@media (min-width:340px) and (max-width: 351px) {
+  html {
+    font-size: 2.6px;
+  } 
+}
+
+@media (min-width:0px) and (max-width: 339px) {
   html {
     font-size: 2.5px;
   } 
 }
 
-@media (min-width:0px) and (max-width: 338px) {
-  .section1{
-    height: 50vh;
-  }
+/* @media (min-width:339px) and (max-width: 403px) {
+  html {
+    font-size: 2.5px;
+  }  
+}*/
 
-  .section2{
-    height:50vh;
-  }
-  
+
+/* @media (min-width:0px) and (max-width: 338px) {
   html {
     font-size: 2px;
   } 
-}
+} */
