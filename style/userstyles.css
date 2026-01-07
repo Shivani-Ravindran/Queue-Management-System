@@ -55,6 +55,19 @@ header {
   border: none;
 }
 
+#directionsBtn{
+  background: #0a152e;
+  color: white;
+  border-radius: 1.2rem;
+  font-size: 1.6rem;
+  cursor: pointer;
+  padding: 1.2rem 2.4rem;
+  border: none;
+  position: absolute;
+  top: 0.5rem;
+  right: 5rem;
+}
+
 /* MAIN */
 section {
   display: flex;
@@ -70,6 +83,7 @@ section {
   padding: 2rem;
   box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.08);
   height: 100%;
+  position: relative;
 }
 
 .right-panel {
@@ -512,9 +526,10 @@ label {
 }
 
 #map{
-  height: 15px;
-  width: 15px;
+  height: 1.5rem;
+  width: 1.5rem;
 }
+
 /* Media Queries */
 @media (min-width: 1300px) {
   html {
